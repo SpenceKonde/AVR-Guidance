@@ -1,7 +1,7 @@
 # Best Practices for AVRs in Arduino
 Poor programming practices are endemic to the Arduino community, and result in poor sketch performance, wasted flash/RAM, difficulty porting sketches to other parts. These can also make your code difficult for others to understand, for example if you post on the Arduino forus requesting assitance. These can also increase the liklihood of bugs that result in the MCU crashing or resetting, as well. For best results, read this guide **BEFORE** you write the sketch (this is not intended as a debugging guide, but rather a set of practices to reduce the need for debugging). 
 
-It is recommended that all design be performed targeting *chips* not *boards* - this eases the process of moving from a general purpose development board to a custom produced board for your application - unless you're sure that your design will be a one-off, don't design to the specific quirks of the development board you happen to have.
+It is recommended that all design be performed targeting *chips* not *boards* - this eases the process of moving from a general purpose development board (like an Arduino board) to a custom produced board for your application - unless you're sure that your design will be a one-off, don't design to the specific quirks of the development board you happen to have.
 
 This guide applies to all AVR parts supported by Arduino via official board packages or third party hardware packages. (if you are the author of a third party hardware package that supports parts not listed, and want to be included on this list, please contact me). This does not cover the 16-bit XMEGA processors.
 
@@ -19,20 +19,26 @@ The official terminology for these series of parts is as follows:
 
 Additional terminology
 `core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. 
+`UART` - Also called a serial port - this is what is used by Serial. The name stands for Universal Asynchronous Receiver-Transmitter.  
+`USART` - As above, but has an additional feature that an XCK pin can be used as a clock, instead of using a pre-arranged baud rate. This feature is rarely used, and it is common for `UART` to be used to refer to either type (though the inverse is not done, and would be inaccurate). Stands for Universal Synchronous/Asynchronous Receiver-Transmitter
 
 ## Use the right hardware package
-For best results, use the suggested hardware packages below. Due to dubious decisions made in the official board packages, we regret that we cannot recommend their use. Parts not listed below are not recommended for new designs. While hardware packages that support them may be available, their use is not advisable in new designs (please PR/create issue if there are good parts that are not listed below).
+For best results, use the suggested hardware packages below. The official Arduino board packages are usually not suitable for advanced projects, unless your hardware configuration is the same as the official ones, as they are designed to target specific boards, with clock frequency and other design decisions matching only that particular board. Parts not listed below are not recommended for new designs. While hardware packages that support them may be available, their use is not advisable in new designs (please PR/create issue if there are good parts that are not listed below).
 
-**For new designs, the "modern" parts with the new peripherals are recommended - they are cheaper, have better peripherals, and are the future of the AVR product line** However, the library support for these parts has still not caught up; be sure to check that any libraries used support these parts.
+## Use the right chip
+
+**For new designs, the "modern" parts with the new peripherals are recommended** - they are cheaper, have better peripherals, and are the future of the AVR product line** However, the library support for these parts has still not caught up; be sure to check that any libraries used support these parts; a good "quick test" would be to attempt to compile a library example with the part you're considering selected. Errors of the form `'variable' was not defined in this scope` where variable is a short combination of capital letters (ex "TCCR1A") are indicative of this - those are names of hardware registers, which are not present on all bpards.
 
 **If you're looking at using the basic ATmega328p, consider the ATmega328pb** - it has more pins, more timers (hence more PWM channels), and an extra serial port, and it costs less, at least from major US disributors.
 
-#### modern AVR devices
+**Be sure that it has the peripherals you need** - this means pins, timers, UART's
+
+#### Modern AVR devices
 * ATmega4809, 4808 (and smaller-flash versions) incl. Uno WiFi Rev. 2 and Nano Every: https://github.com/MCUdude/MegaCoreX
 * ATtiny3217, 3216, 1614, 412 (and 0-series and smaller-flash versions): https://github.com/SpenceKonde/megaTinyCore
 * DA-series (AVR128DA) - the newest, top-end parts in the 8-bit AVR line (work is underway for suppoet at this time)
 
-#### classic AVR devices
+#### Classic AVR devices
 * ATmega2560, 2561 (and smaller-flash versions): https://github.com/MCUdude/MegaCore
 * ATmega1284p (and smaller-flash versions), incl. Sanguino: https://github.com/MCUdude/MightyCore
 * ATmega328/p/pb ( and smaller-flash versions - for new designs, the PB parts are strongly recommended): https://github.com/MCUdude/MiniCore
@@ -44,5 +50,7 @@ While all of these packages do provide "Arduino Pin Numbers" and "Analog Pin Num
 
 You **cannot** refer to these with "PIN_xn" (ex PIN_B2). 
 Some older cores do not support the PIN_Pxn notation; see the above recommendations of hardware packages.
+
+## Bootloaders
 
 ## 

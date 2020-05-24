@@ -23,37 +23,19 @@ The official terminology for these series of parts is as follows:
 Additional terminology
 `core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. 
 `UART` - Also called a serial port - this is what is used by Serial. The name stands for Universal Asynchronous Receiver-Transmitter.  
-`USART` - As above, but has an additional feature that an XCK pin can be used as a clock, instead of using a pre-arranged baud rate. This feature is rarely used, and it is common for `UART` to be used to refer to either type (though the inverse is not done, and would be inaccurate). Stands for Universal Synchronous/Asynchronous Receiver-Transmitter
+`USART` - As above, but has an additional feature that an XCK pin can be used as a clock, instead of using a pre-arranged baud rate. This feature is rarely used, and it is common for `UART` to be used to refer to either type, since a USART can act as a UART (though the inverse is not done, and would be inaccurate, since a UART cannot do synchronous serial, only async). Stands for Universal Synchronous/Asynchronous Receiver-Transmitter
 
-## Use the right hardware package
-For best results, use the suggested hardware packages below. The official Arduino board packages are usually not suitable for advanced projects, unless your hardware configuration is the same as the official ones, as they are designed to target specific boards, with clock frequency and other design decisions matching only that particular board. If you're using an offical board, go ahead and use them. Parts not listed below are not recommended for new designs. While hardware packages that support them may be available, their use is not advisable in new designs (please PR/create issue if there are good parts that are not listed below). 
+## Basics
+* Use F() macro for constants (yes, even though this is a no-op on 0-series and 1-series parts!)
+  * Don't depend on getting `_flashStringConstant` back from F()
+  * Don't use PROGMEM on modern AVRs - anything declared const will be kept in flash, yet can be accessed like a normal variable (yay for memory mapping!)
+  * if you think your code might end up running on either classic or modern AVRs, use #ifdefs to select the right implementation. (insert example here)
+* Use Blink-Without-Delay techniques and millis() for timing
+* Use fast digitalRead/Write/pinMode where possible
 
-Note that currently, devices with native USB are largely beyond the scope of this guide - and as far as I am aware, there is only one choice with Arduino support amyway, the 32u4 - there just aren't many AVRs with USB support in the first place. vUSB is a whole diferent animal (though unfortunately it often has compatibility problems 
-
-#### Modern AVR devices
-* ATmega4809, 4808 (and smaller-flash versions) incl. Uno WiFi Rev. 2 and Nano Every: https://github.com/MCUdude/MegaCoreX
-* ATtiny3217, 3216, 1614, 412 (and 0-series and smaller-flash versions): https://github.com/SpenceKonde/megaTinyCore
-* DA-series (AVR128DA) - the newest, top-end parts in the 8-bit AVR line (work is underway for suppoet at this time)
-
-#### Classic AVR devices
-* ATmega2560, 2561 (and smaller-flash versions): https://github.com/MCUdude/MegaCore
-* ATmega1284p (and smaller-flash versions), incl. Sanguino: https://github.com/MCUdude/MightyCore
-* ATmega328/p/pb ( and smaller-flash versions - for new designs, the PB parts are strongly recommended): https://github.com/MCUdude/MiniCore
-* ATtiny 84, 85, 4313, 88, 841, 828, 1634, 43, 861, 167 (and smaller-flash versions): https://github.com/SpenceKonde/ATTinyCore
-* ATtiny13 https://github.com/MCUdude/MicroCore
-
-
-## Use the right chip - plan ahead
-Early on in a project, you have to pick what microcontroller you're going to use. As long as you're not making a custom board (yet), it's not set in stone - you can move up to a more capable one with more pins, or more memory. It could be as simple as changing some pin assignement, ore more complicated (if you used a lot of registers or peripherals directly). Once you're on a custom made board, the cost to switch if you discover that the chip you put on the boards doesn't cut it is a lot higher - not only in money, but also the time it takes to get a new batch made. You should always expect that during the course of the project, you'll find a reason you need a few more pins - preempt that by making sure you have a few unused pins for when that happens. 
-
-#### General considerations
-
-**For new designs, the "modern" parts with the new peripherals are recommended** - they are cheaper, have better peripherals, and are the future of the AVR product line. However, the library support for these parts has still not caught up; be sure to check that any libraries you plan to use support these parts. A good "quick test" would be to attempt to compile a library example with the part you're considering selected. Errors of the form `'variable' was not defined in this scope` where variable is a short combination of capital letters (ex "TCCR1A") are indicative of this - those are names of hardware registers, which are not present on all parts. You will also find that there are some incompatibilities among classic parts of this sort - different parts have different peripherals, and some name them different things for historical reasons. Some libraries only support a specific subset of parts and will #error if they see an unsupported parts (I recall a cases where library would run without modification on most classic AVR devices - except that it tested for an ATmega2560, ATmega1280, or ATmega328p (and maybe the 328 and 168), or the ATtiny85 (where I think it did do some things differently) - and if wasn't on one of those parts, it would error out. Which is an example of poor practice in library code!)
-
-#### Specific considerations
-
-**If you're looking at using the basic ATmega328p, consider the ATmega328pb** - it has more usable pins, more timers (hence more PWM channels), and an extra serial port, and it costs less, at least from major US disributors. 
-
+## Less-basics
+* pulseIn() kind of sucks - particularly on modern AVRs, you can do way better with input capture and a type B timer (see [InputCapture example](InputCapture.md) - for one thing input capture is non-blocking if you want it to be (that is, you can do it in the background while also doing something else)
+* 
 
 ## How to refer to pins
 While all of these packages do provide "Arduino Pin Numbers" and "Analog Pin Numbers" (eg, pins named "A0" and such) it is recommended that you refer to pins using their "port pin numbers" PIN_Pxn notation (ie, PIN_PA2 refers to PA2, pin 2 on PORT A). These are immune to confusion relating to different pin mappings (which are common, for historical reasons, and provide maximum portability between different parts in the same families (particularly with the newer parts, where devices with different pin counts from the same family will typically have the same functionality on the same port pins. 

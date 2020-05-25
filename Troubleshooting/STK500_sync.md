@@ -4,7 +4,7 @@ These are a common - and unfortunately, very uninformative - error message to se
 **THIS GUIDE ONLY APPLIES IF YOU'RE GETTING AN STK500 SYNC ERROR**
 **DO NOT USE IF YOU ARE NOT GETTING AN ERROR THAT LOOKS LIKE THIS**
 
-**OR THIS (for Arduino Mega2560)
+**OR THIS (for Arduino Mega2560)**
 
 
 ## Correct port?

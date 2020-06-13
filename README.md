@@ -15,18 +15,28 @@ This guide uses two unofficial names to refer to the two broad classes of parts 
 
 The official terminology for these series of parts is as follows:
 'tinyAVR` - All 'ATtiny' devices.
+
 `tinyAVR 0-series` and `tinyAVR 1-series` - The ATtiny devices featuring the new peripherals
+
 `megaAVR` - All 'ATmega' devices
+
 `megaAVR 0-series` - The ATmega4809, 4808, and smaller-flash versions of these parts, featuring the new peripherals.
+
 `AVR DA-series` - The newest 8-bit AVR devices, featuring the new peripherals with enhanced features.
 
 Additional terminology
-`core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. 
-`UART` - Also called a serial port - this is what is used by Serial. The name stands for Universal Asynchronous Receiver-Transmitter.  
-`USART` - As above, but has an additional feature that an XCK pin can be used as a clock, instead of using a pre-arranged baud rate. This feature is rarely used, and it is common for `UART` to be used to refer to either type, since a USART can act as a UART (though the inverse is not done, and would be inaccurate, since a UART cannot do synchronous serial, only async). Stands for Universal Synchronous/Asynchronous Receiver-Transmitter
+`mxxx` and `txxx` are shorthand for ATmegaxxx, eg, m328p refers to the ATmega328p, t3216 refers to the ATtiny3216. This shorthand is derived from the abbreviations used by AVRdude to refer to these parts. `tnxxx` is also sometimes used for the ATtiny parts, though less commonly; this is the abbreviation used by the compiler toolchain, though rarely seen outside of it.
+
+`toolchain` refers to the package of compiler tools and libraries required to compile code for a given architecture. In the context of Arduino and AVR parts, this consists of avr-gcc, the device-specs which contain information on specific parts, the linker scripts which tell the linker where to locate the compiled code within the compiled binary, the precompiled .a and .o files for specific parts, and avr-libc, the collection of standard C/C++ libraries that provide basic functionality for the AVR parts and provide very basic wrappers around AVR peripherals. avr-gcc and avr-libc are available as separate packages, while the part specific libraries, including io*.h are supplied by the "atpacks" provided by Microchip. The Arduino compiler toolchain packages contain all three, and precompile a large number of device-specific .o files.
+
+`core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. Depending on the specific hardware package (and the demands of the parts it supports), the core may or may not be shared with other hardware packages (for example, almost all classic megaAVR parts 
+
+`UART` - Also called a serial port - this is what is used by Serial. The name stands for Universal Asynchronous Receiver-Transmitter. 
+
+`USART` - As above, but has an additional feature that an XCK pin can be used as a clock, instead of using a pre-arranged baud rate. It is common for `UART` to be used to refer to either type, since a USART can act as a UART (though the inverse is not done, and would be inaccurate, since a UART cannot do synchronous serial, only async). Stands for Universal Synchronous/Asynchronous Receiver-Transmitter. AVR parts generally have a USART, not just a UART - however, use of the XCK pin is unheardof in Arduino applications, and quite rare in general - it is a "low cost" feature for the manufacturer to implement, and goes alongside support for reconfiguring a USART to act as an SPI port, which is supported by AVR parts.
 
 ## Basics
-* Use F() macro for constants (yes, even though this is a no-op on 0-series and 1-series parts!)
+* Use F() macro for string constants printed with Serial.print() - even though this is a no-op on 0-series and 1-series parts, it imposes no cost there, and makes it easier to port code to classic AVR and DA-series parts.
   * Don't depend on getting `_flashStringConstant` back from F()
   * Don't use PROGMEM on modern AVRs - anything declared const will be kept in flash, yet can be accessed like a normal variable (yay for memory mapping!)
   * if you think your code might end up running on either classic or modern AVRs, use #ifdefs to select the right implementation. (insert example here)

@@ -17,4 +17,4 @@ Samples/second | Description
 
 In the final configuration, a 5:1 speedup was achieved by replacing digitalWrite() with direct port manipulation, and the map() call with an LUT; the latter accounted for 3-quarters of the improvement. This came at the cost of 2048 bytes of flash for each LUT - since the compiled size of the sketch was only 5.1K with the two LUTs, this was not a concern in this case (note that we did not have the option of backing off to an 814 to lower BOM costs - it lacks the second DAC which was crucial to both the high sample speed, and the elimination of channel switching error). 
 
-This also underlines the miserable performance of digitalWrite() - this is due 
+This also underlines the miserable performance of digitalWrite() - this is due to the process of looking up the port and bit from the Arduino pin number, and checking if the pin has PWM and turning it off if so.

@@ -4,6 +4,7 @@ They may not be glamourous, and they may not be graceful, and they may not be th
 
 ## map2lut tool
 My map2lut tool provides a simple web interface for generating a lookup table from the values passed to map() - you just enter the values passed to map(), the minimum and maximum of the output, select the type, and click generate, and it will output valid C code that you can copy-and-paste into your sketch (or into a .h file that you include, if you prefer), as well as an example of accessing it. If you are using a processor that supports memory mapped flash access (megaAVR 0-series, like ATmega4809 (used in Uno WiFi Rev. 2 or Nano Every) or tinyAVR 0-series or 1-series, such as ATtiny3216), check the "memory mapped" box. 
+
 http://drazzy.com/e/map2LUT.html
 
 ## Case Study:

@@ -3,9 +3,10 @@ As developers, we inevitable spend most of our precious time chasing down bugs i
 
 # So the sketch won't compile?
 Be sure to expand the console and copy+paste ALL the errors into a text file - often the thing that *actually* generated the error was listed further up, and caused a cascade of errors, ending in one far removed from whatever caused it. Also, look for any Warnings - these are things that aren't errors, but may hint at where a bug is coming from (or may be less of a concern). Make sure you enabled warnings in File -> Preferences. 
-Verbose compile output is often much less useful - it outputs a lot of text, but it's often not very useful; most often it is relevant to IDE, system, or Core/board package bugs - and it can bury useful warnings under a wall of text. I suggest keeping it off. 
 
-This guide does not cover basic syntax errors. Just search google for those. I try to cover interesting and/or Arduino specific ones here.
+Verbose compile output is often not very useful if it's just one sketch that's broken - it outputs a lot of text, but it's often not useful - and it can bury useful warnings under a wall of text. I suggest keeping it off when the problem is just with your sketch. If Bare Minimum doesn't compile - either for one board, or in general, there is a larger issue, and often verbose output will contain some additional information. At worst, that's the information you'll be asked for if you post on forums asking for help. 
+
+This guide does not cover basic syntax errors, though it may mention them in passing, particularly ones that are associated with problems that are often the subject of posts on the Arduino forums. I try to cover interesting and/or Arduino specific issues (as well as giving obligatory mentions to a few VERY common ones) here.
 
 ## Does Bare Minimum compile? 
 Does the Bare Minimum example compile for the part you're using? 

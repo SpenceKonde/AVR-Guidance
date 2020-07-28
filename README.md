@@ -16,22 +16,24 @@ This guide uses two unofficial names to refer to the two broad classes of parts 
 * `modern AVR` refers to any AVR part with the new-style peripherals - this currently includes the tinyAVR 0-series and 1-series, the megaAVR 0-series, and the AVR-DA series (which appears to be what would have been the megaAVR 1-series, had they not changed the branding. This had previously been referred to as "megaavr" in many Arduino circles, amd that is what the IDE internally calls this architecture - however this terminology is unofficial, and presents confusion, since Microchip refers to all ATmega processors as "megaAVR". We try to avoid using `modern AVR` except where it is necessary.
 
 The official terminology for these series of parts is as follows:
-'tinyAVR` - All 'ATtiny' devices.
+* 'tinyAVR` - All 'ATtiny' devices.
 
-`tinyAVR 0-series` and `tinyAVR 1-series` - The ATtiny devices featuring the new peripherals
+* `tinyAVR 0-series` and `tinyAVR 1-series` - The ATtiny devices featuring the new peripherals
 
-`megaAVR` - All 'ATmega' devices
+* `megaAVR` - All 'ATmega' devices
 
-`megaAVR 0-series` - The ATmega4809, 4808, and smaller-flash versions of these parts, featuring the new peripherals.
+* `megaAVR 0-series` - The ATmega4809, 4808, and smaller-flash versions of these parts, featuring the new peripherals.
 
-`AVR DA-series` - The newest 8-bit AVR devices, featuring the new peripherals plus additional enhanced features.
+* `AVR DA-series` - The newest 8-bit AVR devices, featuring the new peripherals plus additional enhanced features.
 
-Additional terminology
-`mxxx` and `txxx` are shorthand for megaAVR and tinyAVR devices, eg, m328p refers to the ATmega328p, t3216 refers to the ATtiny3216. This shorthand is derived from the abbreviations used by AVRdude to refer to these parts. `tnxxx` is also sometimes used for the ATtiny parts, though less commonly; this is the abbreviation used by the compiler toolchain, though rarely seen outside of it.
+### Additional terminology
+* `mxxx` and `txxx` are shorthand for megaAVR and tinyAVR devices, eg, m328p refers to the ATmega328p, t3216 refers to the ATtiny3216. This shorthand is derived from the abbreviations used by AVRdude to refer to these parts. `tnxxx` is also sometimes used for the ATtiny parts, though less commonly; this is the abbreviation used by the compiler toolchain, though rarely seen outside of it.
 
-`toolchain` refers to the package of compiler tools and libraries required to compile code for a given architecture. In the context of Arduino and AVR parts, this consists of avr-gcc, the device-specs which contain information on specific parts, the linker scripts which tell the linker where to locate the compiled code within the compiled binary, the precompiled .a and .o files for specific parts, and avr-libc, the collection of standard C/C++ libraries that provide basic functionality for the AVR parts and provide very basic wrappers around AVR peripherals. avr-gcc and avr-libc are available as separate packages, while the part specific libraries, including io*.h are supplied by the "atpacks" provided by Microchip. The Arduino compiler toolchain packages contain all three, and precompile a large number of device-specific .o files.
+* `toolchain` refers to the package of compiler tools and libraries required to compile code for a given architecture. In the context of Arduino and AVR parts, this consists of avr-gcc, the device-specs which contain information on specific parts, the linker scripts which tell the linker where to locate the compiled code within the compiled binary, the precompiled .a and .o files for specific parts, and avr-libc, the collection of standard C/C++ libraries that provide basic functionality for the AVR parts and provide very basic wrappers around AVR peripherals. avr-gcc and avr-libc are available as separate packages, while the part specific libraries, including io*.h are supplied by the "atpacks" provided by Microchip. The Arduino compiler toolchain packages contain all three, and precompile a large number of device-specific .o files.
 
-`core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. Depending on the specific hardware package (and the demands of the parts it supports), the core may or may not be shared with other hardware packages (for example, almost all classic megaAVR parts 
+* `core` colloquially refers to the package of files that can be used to add support for new parts to the IDE; that is why almost every hardware package includes "core" in it's name. Technically, the "core" specifically refers to the implementation of the Arduino functions on that class of processors, rather than the rest of the package - the board, platform, programmer, etc definitions. Depending on the specific hardware package (and the demands of the parts it supports), the core may or may not be shared with other hardware packages (for example, almost all classic megaAVR parts can use the same core; similarly megaAVR 0-series and tinyAVR 0/1-series devices share the same core (for that matter, I'm pretty sure that megaAVR 0-series could use the same core as megaTinyCore too - the reverse is not true, because the tinyAVR 1-series has peripherals that 0-series parts do not).
+
+* `variant` As noted above, hardware packages will often support many parts which can share the same core. The differences betweem parts with different numbers of pins or port-to-pin mappings are often provided by a single file within the "variants" directory inside the hardware package, which typically contains only a single file: pins_arduino.c. This is the file that contains arrays and macros that map Arduino pin numbers to ports, analog pin numbers (`An` naming) to ADC channels, PWM pins to their timer and channel, and so on. Parts that differ only in the amount of RAM (and sometimes presence or absence of peripherals, for example, tinyAVR 1-series vs 0-series) can be supported with the same variant.
 
 `UART` - Also called a serial port - this is what is used by Serial. The name stands for Universal Asynchronous Receiver-Transmitter. 
 

@@ -1,6 +1,8 @@
 # Best Practices for AVRs in Arduino
 
-THIS GUIDE IS IN VERY EARLY STAGES
+## THIS GUIDE IS IN VERY EARLY STAGES
+## It should NOT be used as a general guide at this time
+**Some pages may be ready for public consumption, and linked to from elsewhere, but as a general guide, it is not**
 
 Poor programming practices are endemic to the Arduino community, and result in poor sketch performance, wasted flash/RAM, difficulty porting sketches to other parts. These can also make your code difficult for others to understand, for example if you post on the Arduino forus requesting assitance. These can also increase the liklihood of bugs that result in the MCU crashing or resetting, as well. For best results, read this guide **BEFORE** you write the sketch (this is not intended as a debugging guide, but rather a set of practices to reduce the need for debugging). 
 
@@ -22,10 +24,10 @@ The official terminology for these series of parts is as follows:
 
 `megaAVR 0-series` - The ATmega4809, 4808, and smaller-flash versions of these parts, featuring the new peripherals.
 
-`AVR DA-series` - The newest 8-bit AVR devices, featuring the new peripherals with enhanced features.
+`AVR DA-series` - The newest 8-bit AVR devices, featuring the new peripherals plus additional enhanced features.
 
 Additional terminology
-`mxxx` and `txxx` are shorthand for ATmegaxxx, eg, m328p refers to the ATmega328p, t3216 refers to the ATtiny3216. This shorthand is derived from the abbreviations used by AVRdude to refer to these parts. `tnxxx` is also sometimes used for the ATtiny parts, though less commonly; this is the abbreviation used by the compiler toolchain, though rarely seen outside of it.
+`mxxx` and `txxx` are shorthand for megaAVR and tinyAVR devices, eg, m328p refers to the ATmega328p, t3216 refers to the ATtiny3216. This shorthand is derived from the abbreviations used by AVRdude to refer to these parts. `tnxxx` is also sometimes used for the ATtiny parts, though less commonly; this is the abbreviation used by the compiler toolchain, though rarely seen outside of it.
 
 `toolchain` refers to the package of compiler tools and libraries required to compile code for a given architecture. In the context of Arduino and AVR parts, this consists of avr-gcc, the device-specs which contain information on specific parts, the linker scripts which tell the linker where to locate the compiled code within the compiled binary, the precompiled .a and .o files for specific parts, and avr-libc, the collection of standard C/C++ libraries that provide basic functionality for the AVR parts and provide very basic wrappers around AVR peripherals. avr-gcc and avr-libc are available as separate packages, while the part specific libraries, including io*.h are supplied by the "atpacks" provided by Microchip. The Arduino compiler toolchain packages contain all three, and precompile a large number of device-specific .o files.
 

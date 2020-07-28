@@ -20,6 +20,6 @@ It is often cautioned that the operating voltage (Vcc) of the target must not be
 ### megaTinyCore background + history
 It is not credible for me to deny that I contributed to this confusion. I was initially confused myself as to the purpose and requirements for this resistor, and for over a year, promoted the use of a 4.7k resistor. This is inappropriately high, as described above. Customers complained about this when I was selling boards with this value of resistor, leading to the change in my recommendations amd assebled boards in Q2 2020.
 
-This whole discussion begs the question: "What is the microchip recommendation for this?" 
+This whole discussion begs the question: "What is the Microchip recommendation for this?" 
 
 I have looked for such a recommendation. I have not found one. When I started selling these my tinyAVR breakout boards, I had somehow gotten the idea that 4.7k was an official value - my best guess as to where that came from is that I saw it in the documentation for pyudpi, which was (and still is) a very popular tool for programming these parts.. Obviuously, pyupdi is not an official Microchip sanctioned piece of software. Beyond that, the value used for pyupdi is = as far as I can determine - largely dictated by the electrical properties of the serial adapter. Experience has shown that the value needed to make pyupdi work reliably depends largely on serial adapter. The standard value of 4.7k works great for anything for a wide ranger of power voltage configur

@@ -1,5 +1,5 @@
 # Libraries
-### (and other codes you expect others to use, modify, play with, and learn from)
+### (and other code you expect others to use, modify, play with, and learn from)
 Writing libraries that you will make available to others and expect that they will actually use presents some particular concerns that code designed for use by only yourself or your collaborators does. Even if you store it is a public github repo - a practice I wholeheartedly endorse - code that isn't meant for public consumption doesn't present the same sort of challenges. 
 
 ## Technical Matters

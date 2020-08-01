@@ -11,7 +11,7 @@ If your code would work on many parts with only small changes, use #if and #ifde
 ### Don't assume F() will return a `__flashStringHelper`
 On parts with memory mapped flash (eg, megaAVR 0-series and tinyAVR 0/1-series), it returns a pointer to a normal null terminated const char array! These platforms don't need to explicitly place constants into PROGMEM; any const is kept on flash, and can be read like a normal variable! Library code should deal with this gracefully; If C++, you should support both with different functions, and let the compiler figure out which version of the functions to build. If it's written in C, you don't have that option, so you can test for it like this:
 ```
-#if (__AVR_ARCH__ == 103 || defined(CORE_STRINGS_MAPPED))
+#if (__AVR_ARCH__ == 103 || defined(CORE_F_MACRO_MAPPED))
 //memory mapped, expect a const char*
 #else
 //not memory mapped, expect a const __FlashStringHelper*

@@ -4,6 +4,7 @@
 ## It should NOT be used as a general guide at this time
 **Some pages may be ready for public consumption, and linked to from elsewhere, but as a general guide, it is not**
 
+## Motivation
 Poor programming practices are endemic to the Arduino community, and result in poor sketch performance, wasted flash/RAM, and difficulty porting sketches to other parts. These can also make your code difficult for others to understand, for example if you post on the Arduino forums requesting assitance. Poor practices common in Arduino can also increase the liklihood of bugs that result in the MCU crashing or resetting, as well. For best results, read this guide **BEFORE** you write the sketch (this is not intended as a debugging guide, but rather a set of practices to reduce the need for debugging). 
 
 It is recommended that all design be performed targeting *chips* not *boards* - this eases the process of moving from a general purpose development board (like an Arduino board) to a custom produced board for your application - unless you're sure that your design will be a one-off, don't design to the specific quirks of the development board you happen to have.

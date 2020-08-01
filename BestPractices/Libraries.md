@@ -8,6 +8,16 @@ When you write code for your own projects, even if you try to make it generally 
 ### Use #if / #ifdef liberally
 If your code would work on many parts with only small changes, use #if and #ifdef to switch implementation details depending on the hardware they are using. Ideally, if you an determine that it wont work on that hardware, you can do something like `#error "Cannot find peripheral X, which is required for this library. See the README for more information"`
 
+### Don't assume F() will return a `__flashStringHelper`
+On parts with memory mapped flash (eg, megaAVR 0-series and tinyAVR 0/1-series), it returns a pointer to a normal null terminated const char array! These platforms don't need to explicitly place constants into PROGMEM; any const is kept on flash, and can be read like a normal variable! Library code should deal with this gracefully; If C++, you should support both with different functions, and let the compiler figure out which version of the functions to build. If it's written in C, you don't have that option, so you can test for it like this:
+```
+#if (__AVR_ARCH__ == 103 || defined(CORE_STRINGS_MAPPED))
+//memory mapped, expect a const char*
+#else
+//not memory mapped, expect a const __FlashStringHelper*
+#endif
+```
+
 ### Test for peripherals, not chips
 In the aforementioned #if's you should test for pheripherals which your code needs (by checking whether the register names are defined) not the specific parts you used or know off the top of your head will work. For example, if your library involves input capture, you might implement it on the 16-bit Timer1 peripheral on most classic AVRs have at least one of, and on a Type B timer on that the modern AVRs have, and then test for `#if defined(TCB0) || defined(TCCR1C)` - because if it had either of those things, you could be pretty confident that your library would work fine there.
 

@@ -18,6 +18,10 @@ This guide applies to all AVR parts supported by Arduino via official board pack
 * Use Blink-Without-Delay techniques and millis() for timing.
   * Unless you're doing a very short delay, and/or want it to block until the delay is over. One should never busy-wait for millis() timekeeping - that's just a less precise delay()!
 * Use fast digitalRead/Write/pinMode where possible and supported.
+* If you fork a library on github...
+  * If it's temporary - just for making a PR - delete it after the PR was accepted. PRing bug-fixes is a good-citizen thing to do.
+  * If it's for long-term personal use, modify the README.md to say that, and that you don't recommend others use it.
+  * If it's for public consumption, modify the README.md to describe the changes you've made and, preferably, why.
 
 
 ## Less-basics
@@ -27,6 +31,6 @@ This guide applies to all AVR parts supported by Arduino via official board pack
 While all of these packages do provide "Arduino Pin Numbers" and "Analog Pin Numbers" (eg, pins named "A0" and such) it is recommended that you refer to pins using their "port pin numbers" PIN_Pxn notation (ie, PIN_PA2 refers to PA2, pin 2 on PORT A). These are immune to confusion relating to different pin mappings (which are common, for historical reasons, and provide maximum portability between different parts in the same families (particularly with the newer parts, where devices with different pin counts from the same family will typically have the same functionality on the same port pins. 
 
 You **cannot** refer to these with "PIN_xn" (ex PIN_B2). 
-Some older cores do not support the PIN_Pxn notation; see the above recommendations of hardware packages.
+Some older cores do not support the PIN_Pxn notation; see the recommendations of hardware packages.
 
 

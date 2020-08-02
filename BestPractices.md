@@ -13,16 +13,20 @@ This guide applies to all AVR parts supported by Arduino via official board pack
 
 ## Basics
 * Use F() macro for string constants printed with Serial.print() - even though this is a no-op on tinyAVR 0/1-series and megaAVR 0-series parts, it imposes no cost there, and makes it easier to port code to classic AVR and DA-series parts.
-  * Don't depend on getting `_flashStringConstant` back from F() 
-  * Don't use PROGMEM on tinyAVR 0/1-series and mega 0-series- anything declared const will be kept in flash, yet can be accessed like a normal variable (yay for memory mapping!)
-  * if you think your code might end up running on either classic or modern AVRs, use #ifdefs to select the right implementation. (insert example here)
+ * Don't depend on getting `_flashStringConstant` back from F() 
+ * Don't use PROGMEM on tinyAVR 0/1-series and mega 0-series- anything declared const will be kept in flash, yet can be accessed like a normal variable (yay for memory mapping!)
+ * if you think your code might end up running on either classic or modern AVRs, use #ifdefs to select the right implementation. (insert example here)
 * Use Blink-Without-Delay techniques and millis() for timing.
-  * Unless you're doing a very short delay, and/or want it to block until the delay is over. One should never busy-wait for millis() timekeeping - that's just a less precise delay()!
-* Use fast digitalRead/Write/pinMode where possible and supported.
+ * Unless you're doing a very short delay, and/or want it to block until the delay is over. A short delay() isn't *always* bad. Often, yes, but not always.
+ * One should never busy-wait for millis() - that's just a less precise delay(), just use delay() at that point. 
+  * exception: You're using some weird combination of core + options with millis() and delay(), but not micros(), particularly if you have ISR's you want to be triggered during that delay. 
+  * On cores without micros(), delay() calls delayMicroseconds(1000) repeatedly, which runs with interrupts disabled.
 * If you fork a library on github...
-  * If it's temporary - just for making a PR - delete it after the PR was accepted. PRing bug-fixes is a good-citizen thing to do.
-  * If it's for long-term personal use, modify the README.md to say that, and that you don't recommend others use it.
-  * If it's for public consumption, modify the README.md to describe the changes you've made and, preferably, why.
+ * If it's temporary - just for making a PR - delete it after the PR is accepted, so nobody mistakes your fork for the version they should be using.
+ * If it's for long-term personal use, but not meant for others to use, modify the README.md to say that, and refer them to the upstream library.
+ * If it's for public consumption, modify the README.md to describe the changes you've made and ideally why.
+* When you use a library you found on github, make sure it's one being actively maintained.
+ * If the readme hasn't changed from the upstream version, that's not a good sign.
 
 
 ## Less-basics

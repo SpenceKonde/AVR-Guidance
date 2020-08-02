@@ -3,7 +3,7 @@
 
 
 ## Sections
-### [Glossary.md](Glossary of terms)
+### (Glossary.md)[Glossary of terms]
 Status: Most important/relevant terms, I think, present. 
 Covers terms used in this and other documents I've written about AVR parts for Arduino, as well as terms common in Arduino 
 ### [BestPractices.md](Best Practices guide)

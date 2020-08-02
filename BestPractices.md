@@ -30,7 +30,7 @@ This guide applies to all AVR parts supported by Arduino via official board pack
 
 
 ## Less-basics
-* pulseIn() kind of sucks - particularly on modern AVRs, you can do way better with input capture and a type B timer, but even with a 16-bit timer on the classic AVRs, it's still better than pulseIn(). (see [InputCapture example](https://github.com/SpenceKonde/AVR-Best-Practices/peripherals/InputCapture.md); for one thing input capture is non-blocking if you want it to be (that is, you can do it in the background while also doing something else), as well as being potentially more precise. 
+* pulseIn() kind of sucks - particularly on modern AVRs, you can do way better with input capture and a type B timer, but even with a 16-bit timer on the classic AVRs, it's still better than pulseIn(). (see [InputCapture example](https://github.com/SpenceKonde/AVR-Best-Practices/blob/master/peripherals/InputCapture.md); for one thing input capture is non-blocking if you want it to be (that is, you can do it in the background while also doing something else), as well as being potentially more precise. 
 
 ## How to refer to pins
 While all of these packages do provide "Arduino Pin Numbers" and "Analog Pin Numbers" (eg, pins named "A0" and such) it is recommended that you refer to pins using their "port pin numbers" PIN_Pxn notation (ie, PIN_PA2 refers to PA2, pin 2 on PORT A). These are immune to confusion relating to different pin mappings (which are common, for historical reasons, and provide maximum portability between different parts in the same families (particularly with the newer parts, where devices with different pin counts from the same family will typically have the same functionality on the same port pins. 

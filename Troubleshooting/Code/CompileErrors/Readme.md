@@ -1,5 +1,5 @@
 # Troubleshooting Your Sketch
-As developers, we inevitable spend most of our precious time chasing down bugs in our code. Often, this is simply an exercise in tedium and/or deep pondering to figure out how to fix the bug you understand - but other times, figuring out WHY it's not working can be a challenge. This document describes some techniques that can be helpful for finding and/or understanding bugs that cause compile errors that don't make sense, at least initially. In some instances, some thoughts on how one might go about fixing them. This section is for *compile* errors, where even "Verify" produces an error. If that works, you want the (TODO: Other section).
+This document describes some techniques that can be helpful for finding and/or understanding bugs that cause compile errors that don't make sense, at least initially. In some instances, some thoughts on how one might go about fixing them. This section is for *compile* errors, where even "Verify" produces an error. If that works, you want the (TODO: Other section).
 
 # So the sketch won't compile?
 Be sure to expand the console and copy+paste ALL the errors into a text file - often the thing that *actually* generated the error was listed further up, and caused a cascade of errors, ending in one far removed from whatever caused it. Also, look for any Warnings - these are things that aren't errors, but may hint at where a bug is coming from (or may be less of a concern). Make sure you enabled warnings in File -> Preferences. 
@@ -11,7 +11,7 @@ This guide does not cover basic syntax errors, though it may mention them in pas
 ## Does Bare Minimum compile? 
 Does the Bare Minimum example compile for the part you're using? 
 
-If not, does it compile for the Arduino Uno? If it compiles for the Arduino Uno, but not the part you want, there is a problem with the board package or "core". 
+If not, does it compile for the Arduino Uno? If it compiles for the Arduino Uno, but not the part you want, there is a problem with the board package or "core" or it is installed incorrectly. not your sketch.
 
 If it is broken for the Arduino Uno too, your IDE is broken. See (TO DO: Nothing compiles)
 
@@ -29,4 +29,6 @@ When this is coming from a library (typically, one that you know works for other
 
 ### Multiple definition of ...
 This is usually a simple one: you're attempting to define the same variable or function twice. The compiler will tell you where the two declarations are. 
+
+If it's in a file called `iosomething.h`, you've picked a register name. Name it something different. Also, don't use `PC` or `SP` - those are the Program Counter and Stack Pointer, respectively, which should not be modified directly. Variables in general should not be named something that could be a register name.
 

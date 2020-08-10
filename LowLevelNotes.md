@@ -1,6 +1,10 @@
 # Low level notes
 This is currently a collection of random things about very low level workings of AVR without any sort of organization. Once there's enough here to organize, I'll clean it up and provide some structure to it. 
 
+### Non-obvious issue when reading registers
+We all know how writing an ill-considered value to a hardware register can  cause weird behavior, and the interrupt safety and need to disable interrupts for read-modify-write processes to prevent and interrupt and main program code from fighting over what value that register should have. One thing you probably havent considered is that just reading from a single register can present a problemk in time-or-flash constrained conditions - simply because each time you grab the value from the register, because it's volatile, it needs to fetch it all the way out of RAM with an LDS/LDS. When every byte matters: each use of a volatile byte (such as a register) imposes a *minimum* of 1 extra cycle penalty vs a non-volatile one, assuming it's close to the last place you used it (such that the CPU would not have written it back to RAM; biggest benefit is seen in things like a big long boolean that checks whether any of a bunch of permutations of ((register & bitmask)&&(some_other_criteria)) are true
+
+
 ### What is GPIORn/GPIOn?
 It's a register - classic AVR parts have three, modern AVRs have four. Like most registers, they hold 1 byte each - but unlike other registers they don't control anything in particular (GPIO, General Purpose I/O ). They are also located in lower I/O space, so IN, OUT, CBI, SBI, SBIS and SBIC instructions work on them. Thus GPIOn|=1<<x and GPIOn&=~(1<<x) (where x=0-7 and is compile-time known) are atomic, (usually true of only the PORTx/PINx/DDRx registers) and compile to a single instruction, they can be loaded and stored faster, and the state of a bit within them can be tested in one instruction. 
 

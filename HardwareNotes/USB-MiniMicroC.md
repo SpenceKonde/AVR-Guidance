@@ -1,0 +1,15 @@
+# USB connectors - mini, micro, or C?
+USB connectors are the best way to get 5v power in, assuming you don't need much current. There's no way you can beat the price of readily available wall chargers, and everyone already has piles of them kicking around, and appreciates not having to keep the adapter for your device separate. So if it's suitable for your device, just use USB for power!
+
+But which connector? Micro? The new-shiny USB-C? or old standby Mini USB?
+
+## C - no, just - no!
+Don't use a USB-C connector unless you actually need the new functionality it offers. Every electronics hobbyist has bushels of micro USB connectors to use to power your device - the same is not true of USB-C; the cables are more expensive, and the mass market hasn't yet led to the same variety of options on the price-performance-durability space that micro USB has.
+
+## Micro
+Micro-USB has many compelling advantages - the cables are cheap and ubiquitous, the quality is typically excellent.... but they have an awful reputation in many hobby circles for the connectors getting ripped off the PCB, along with the pads an pieces of the trace that went to it, most notably with the Arduino Micro, though the problem is widespread. At issue is the fact that the normal Micro-USB connectors are designed for use in consumer electronics where there's a plastic housing around them to absorb the force - but on a bare PCB, there's nothing to stop the connector from being ripped clean off... unless you use a better connector. The whole root of the problem is that - to facilitate mass production - most Micro-USB connectors don't have through-hole tabs to really hold them onto the PCB, and often the SMT pads that hold them down are quite small indeed. 
+### Prevent ripped-out connectors
+The simple solution is to be sure to use a connector on the PCB with nice through-hole tabs. The ones I prefer have four of these; the amount of force it would take to yank one off of the PCB would destroy any connector, and quite possibly break the board itself, before actually ripping the connector out!
+
+## Mini
+Mini USB had far more staying power among hobbyists due to the aforementioned reputation for micro USB connectors getting ripped off the PCB, but new Mini-USB cables are increasingly scarce - and were never available in the same variety and quality as Micro-USB ones - a problem which has only gotten worse as time went on and Mini-USB largely disappeared from the consumer market. The main reason for their staying power was always that they were seen as harder to rip off the PCB than Micro-USB - but: You can still do it if the connector doesn't have through-hole tabs, and a good Micro-USB connector will hold onto the PCB just as tenatiously as a good Mini-USB one will; the only difference is that the *bad* Micro-USB connectors are much worse, and much more common than equally fragile Mini-USB ones. Considering that awareness of what the good connectors are allows a designer to avoid that pitfall, and that on other measures of durability, Micro-USB wins (rated for more insertion cycles) - it's time to leave Mini-USB in the dust-bin of electronics history.

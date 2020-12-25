@@ -101,7 +101,7 @@ There is an incredible variety possible here... Consider something like this:
 
 
   ```
-  // LUT2 and 3 doing /3
+  // LUT2 and 3 doing /12
   
   Logic2.enable = true;               // Enable logic block 2
   Logic2.input0 = in::link;           // LUT3 output
@@ -122,6 +122,8 @@ There is an incredible variety possible here... Consider something like this:
   Logic3.truth = 0x02;                // Set truth table - HIGH if input LOW, (and the other two are masked off)
   // Initialize logic block 0
   Logic3.init();
+
+//LUT1 clocks from that, and is getting feedback from LUT0
 
   Logic1.enable = true;               // Enable logic block 1
   Logic1.input0 = in::feedback;       // use output of even-numbered block, ie, block 0

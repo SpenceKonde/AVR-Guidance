@@ -1,0 +1,181 @@
+# Reading hex files
+Reading hex files by hand is terrible. Try to do everything you can to avoid it! 
+
+If you really do have a hex file that contains valuable information for some reason, and you need to figure out something about it:
+1. Make a backup
+2. in something that can do reges substitutions (I use sublime text)
+Find:
+```
+(:[A-F0-9]{2})([A-F0-9]{4})00(.*)[A-F0-9]{2}
+```
+Sub with: (NO space at start of line)
+```
+\2  \3
+```
+This gets rid of the checksums at ends of lines, the byte-count at starts of lines, the 00 for normal data, and puts a space between address and data.
+
+
+Find (Yes space at the start):
+```
+ ([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})
+```
+Sub with (starts and ends with a space - v. important:
+```
+ \1 \2 \3 \4 \5 \6 \7 \8 
+```
+Repeat above if needed to get the other half of the columns separated into words. Now the key step that makes all the difference....
+Find (space at start - so it won't match addresses):
+```
+ ([A-F0-9]{2})([A-F0-9]{2})
+```
+Sub with:
+```
+\2\1
+```
+This swaps the high and low bytes so that they're in the order that matches the AVR instruction set manual. 
+
+## So... Okay..... great... now what....
+
+The table below shows the hex values of all instructions
+Where a digit is fixed, it's filled in on left
+
+Annotated/most useful
+
+```
+Looking for where it interacts with a certain register because you need to change that
+but don't have the source? This is almost always an lds or sts instruction, and will
+preceed the address of the register.
+
+90_0 1001 000r rrrr 0000 lds (followed by address)
+91_0 1001 000r rrrr 0000 lds (followed by address)
+92_0 1001 001r rrrr 0000 sts (followed by address)
+93_0 1001 001r rrrr 0000 sts (followed by address)
+
+9409 1001 0101 0000 1001 ijmp
+9509 1001 0101 0000 1001 icall 
+940E 1001 0100 0000 1110 call (<128k flash, followed by address)
+940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
+On 256k devices (atmega2560), the last digit can be F or D as well. 
+
+B    1011 0PPd dddd PPPP in
+B    1011 1PPr rrrr PPPP out
+C    1100 LLLL LLLL LLLL rjmp
+D    1101 LLLL LLLL LLLL rcall
+
+The conditionals all start with F or 99/9B (skips), and not F8-FB, those are bitsets. FC-FF are skips, too
+99   1001 1001 pppp psss sbic
+9B   1001 1011 pppp psss sbis
+
+F    1111 00ll llll lsss brbs
+F    1111 01ll llll lsss brbc
+
+F    1111 100d dddd 0sss bld
+F    1111 101d dddd 0sss bst
+F    1111 110r rrrr 0sss sbrc
+F    1111 111r rrrr 0sss sbrs
+
+Singletons that are either important, common, or both.
+9508  1001 0101 0000 1000 ret
+9518  1001 0101 0001 1000 reti
+9588  1001 0101 1000 1000 sleep
+95A8  1001 0101 1010 1000 wdr
+95E8  1001 0101 1110 1000 spm
+ 
+The rest of the 1-first-letter-per-instruction
+E    1110 KKKK dddd KKKK ldi
+
+(not super useful - except that you can quickly determine what the opcode does from just first digit)
+3    0011 KKKK dddd KKKK cpi
+4    0100 KKKK dddd KKKK sbci
+5    0101 KKKK dddd KKKK subi
+6    0110 KKKK dddd KKKK ori
+7    0111 KKKK dddd KKKK andi
+
+8/A is an ldd or std
+
+Only call/rcall/icall, ret/reti, jmp/rjmp/ijmp, and the Branch instructions can do anything other than increment the program counter 
+```
+
+Numerical order
+```
+
+0    0000 0000 0000 0000 nop
+0    0000 0000 xxxx yyyy unused except
+01   0000 0001 dddd rrrr movw
+02   0000 0010 dddd rrrr muls
+03   0000 0011 yddd zrrr mulsu/fmul*
+0    0000 01rd dddd rrrr cpc
+0    0000 10rd dddd rrrr sbc
+0    0000 11rd dddd rrrr add lsl
+
+1    0001 00rd dddd rrrr cpse
+1    0001 01rd dddd rrrr cp
+1    0001 10rd dddd rrrr sub
+1    0001 11rd dddd rrrr adc rol
+
+2    0010 00rd dddd rrrr and
+2    0010 01rd dddd rrrr eor clr
+2    0010 10rd dddd rrrr or
+2    0010 11rd dddd rrrr mov
+
+
+3    0011 KKKK dddd KKKK cpi
+4    0100 KKKK dddd KKKK sbci
+5    0101 KKKK dddd KKKK subi
+6    0110 KKKK dddd KKKK ori
+7    0111 KKKK dddd KKKK andi
+
+8    10q0 qq0r rrrr bqqq ldd
+8    10q0 qq1r rrrr bqqq std
+
+
+9    1001 000r rrrr 0000 lds (followed by address)
+9    1001 000r rrrr xxyy ld (xx = Z 00, lpm 01, Y 10, X 11)
+9    1001 000r rrrr 1111 pop
+90, 91 ld/lds/lpm, pop
+9    1001 001r rrrr 0000 sts (followed by address)
+9    1001 001r rrrr xxyy st (yy = + 01, - 10, 00 for X/lpm only)
+9    1001 001r rrrr 1111 push
+92, 93 st/sts, push
+
+9409 1001 0101 0000 1001 ijmp
+9509 1001 0101 0000 1001 icall 
+940E 1001 0100 0000 1110 call (<128k flash, followed by address)
+9    1001 0101 kkkk 111k call (>128k flash, followed by address)
+940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
+9    1001 0101 kkkk 110k jmp (>128k flash, followed by address)
+
+9508 1001 0101 0000 1000 ret
+9518 1001 0101 0001 1000 reti
+9588 1001 0101 1000 1000 sleep
+95A8 1001 0101 1010 1000 wdr
+95E8 1001 0101 1110 1000 spm
+
+96   1001 0110 KKdd KKKK adiw
+97   1001 0111 KKdd KKKK sbiw
+98   1001 1000 pppp psss cbi
+99   1001 1001 pppp psss sbic
+9A   1001 1010 pppp psss sbi
+9B   1001 1011 pppp psss sbis
+
+9	   1001 11rd dddd rrrr mul
+
+A    10q0 qq0r rrrr bqqq ldd
+A    10q0 qq1r rrrr bqqq std
+
+B    1011 0PPd dddd PPPP in
+B    1011 1PPr rrrr PPPP out
+C    1100 LLLL LLLL LLLL rjmp
+D    1101 LLLL LLLL LLLL rcall
+E    1110 KKKK dddd KKKK ldi
+
+
+F    1111 00ll llll lsss brbs
+F    1111 01ll llll lsss brbc
+
+F    1111 100d dddd 0sss bld
+F    1111 101d dddd 0sss bst
+F    1111 110r rrrr 0sss sbrc
+F    1111 111r rrrr 0sss sbrs
+
+```

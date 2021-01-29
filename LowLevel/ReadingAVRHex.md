@@ -179,3 +179,10 @@ F    1111 110r rrrr 0sss sbrc
 F    1111 111r rrrr 0sss sbrs
 
 ```
+
+The distribution/usage of opcodes is interesting though: 
+* 3/8ths of the instruction-space is taken up with `xxxx-immediate` instructions! (ever wonder why only work on the top 16 registers? Now you know - not enough bits in a 16-bit instruction to let these take up any more of the instruction-space than they already do
+* 1/8th is load/set with displacement (well, if you were ever wondering why they don't have an X-register version of those, there's your answer! 
+* 3/16ths or so math and logical/arithmatic operations.
+* rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th. 
+* 1/32nd conditional branch, 1/32nd skip-if

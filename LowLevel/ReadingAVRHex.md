@@ -187,7 +187,9 @@ The distribution/usage of opcodes is interesting though:
 * rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th. 
 * 1/32nd conditional branch, 1/32nd skip-if
 
-Do you think this whole thing is silly and impractical? That it's not good for anything escept playing armchair-instruction-set-engineer?
-Remember the bit about `lds` and `sts`being particularly useful from the lists above?
-That's how https://github.com/MCUdude/microUPDIcore/commit/49878acda00474831b03005a3cebbdd498bb4b8c#diff-299fd66b54cb0c05b308b3969047fdd0e17f132cedfd167008fb192dc303a19e happened ("well, there's only one register on the whole chip that controls whether AREF is used... now that we reformatted the hex so we can read it, let's search for the address - oh, here, 1 match! And sure enough, that's an STS immediately before it, storing r16 to it... uhoh, what value is in r16? could be anything, and how could we clear the key bit without breaking something else? I dunno how to do that, but what's the instruction right before that one? first digit s E, thats an ldi, third digit a zero - oh lookit that, it's an ldi into r16!")
+Do you think this whole thing is silly and impractical? That it's not good for anything except playing armchair-instruction-set-engineer?
+Remember the bit about `lds` and `sts`being particularly useful?
+That's how https://github.com/MCUdude/microUPDIcore/commit/49878acda00474831b03005a3cebbdd498bb4b8c#diff-299fd66b54cb0c05b308b3969047fdd0e17f132cedfd167008fb192dc303a19e happened!
+
+("well, there's only one register on the whole chip that controls whether AREF is used... now that we reformatted the hex so we can read it, let's search for the address - oh, here, 1 match! And sure enough, that's an STS immediately before it, storing r16 to it... uhoh, what value is in r16? could be anything, and how could we clear the key bit without breaking something else? I dunno how to do that, but what's the instruction right before that one? first digit s E, thats an ldi, third digit a zero - oh lookit that, it's an ldi into r16!")
 

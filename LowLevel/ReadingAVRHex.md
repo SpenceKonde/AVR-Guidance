@@ -1,25 +1,35 @@
 # Reading hex files
 Reading hex files by hand is terrible. Try to do everything you can to avoid it! 
 
-If you really do have a hex file that contains valuable information for some reason, and you need to figure out something about it:
+If you really do have a hex file that contains valuable information for some reason, and you need to figure out something about it... or maybe modify it:
 1. Make a backup
-2. in something that can do reges substitutions (I use sublime text)
+2. Load up something that can do regexs substitutions (I use sublime text and love it)
+
+Maybe it's some compiled piece of proprietary - yet free - software, and it would be just perfect, except that it makes one bad assumpting about how pins will be connected. Maybe it, oh, uses the analog voltage reference - maybe it uses the analog voltage reference pin, while there's a dirt cheap breakout board for the e VREF pin broken out...
+Well - without actually learning any fancy tools, one (*can* manually ("mentally execute") a hex file. It's unpleasant, and slow, and tedious, but sometimes, you've gotta do what you've gotta do. 
+
+## Using RegEx Find and Replace:
+In the following find/replace snippets, you may want to 'view raw' - the spaces around the text are critical to making them work cleanly, every time.... (that's one of the handy things about them, how well they work with the same character that our eyes find to be the best separator.
+
 Find:
 ```
 (:[A-F0-9]{2})([A-F0-9]{4})00(.*)[A-F0-9]{2}
 ```
-Sub with: (NO space at start of line)
+Sub with: (NO SPACE at start of line!)
 ```
 \2  \3
 ```
-This gets rid of the checksums at ends of lines, the byte-count at starts of lines, the 00 for normal data, and puts a space between address and data.
+This gets rid of the stuff that gets in the way of reading it:
+ * The checksums at ends of lines.
+ * The byte-count at starts of lines. 
+ * The 00 for normal data and puts a space between address and data.
 
 
-Find (Yes space at the start):
+Find (Yes space at the start): - this keeps it from grabbing the part before the address from last sub, without anything to distract your eye ;-) 
 ```
- ([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})
+ ([A-F0-9]{4})([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?
 ```
-Sub with (starts and ends with a space - v. important:
+Sub with (starts and ends with a space; very important:
 ```
  \1 \2 \3 \4 \5 \6 \7 \8 
 ```
@@ -37,7 +47,7 @@ This swaps the high and low bytes so that they're in the order that matches the 
 ## So... Okay..... great... now what....
 
 The table below shows the hex values of all instructions
-Where a digit is fixed, it's filled in on left
+Where a digit is always that way for a given instruction, it's filled in on left
 
 Annotated/most useful
 
@@ -66,7 +76,7 @@ The conditionals all start with F or 99/9B (skips), and not F8-FB, those are bit
 99   1001 1001 pppp psss sbic
 9B   1001 1011 pppp psss sbis
 
-F    1111 00ll llll lsss brbs
+F    1111 00ll llll lsss brbs (also all other br__ 
 F    1111 01ll llll lsss brbc
 
 F    1111 100d dddd 0sss bld
@@ -138,12 +148,12 @@ Numerical order
 9    1001 001r rrrr 1111 push
 92, 93 st/sts, push
 
-9409 1001 0101 0000 1001 ijmp
+9409 1001 0100 0000 1001 ijmp
 9509 1001 0101 0000 1001 icall 
-940E 1001 0100 0000 1110 call (<128k flash, followed by address)
-9    1001 0101 kkkk 111k call (>128k flash, followed by address)
 940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
-9    1001 0101 kkkk 110k jmp (>128k flash, followed by address)
+9    1001 010k kkkk 110k jmp (>128k flash, followed by address)
+940E 1001 0100 0000 1110 call (<128k flash, followed by address)
+9    1001 010k kkkk 111k call (>128k flash, followed by address)
 
 9508 1001 0101 0000 1000 ret
 9518 1001 0101 0001 1000 reti
@@ -158,13 +168,16 @@ Numerical order
 9A   1001 1010 pppp psss sbi
 9B   1001 1011 pppp psss sbis
 
-9	   1001 11rd dddd rrrr mul
+9C   1001 11rd dddd rrrr mul
+~
+9F   1001 11rd dddd rrrr mul   
 
 A    10q0 qq0r rrrr bqqq ldd
 A    10q0 qq1r rrrr bqqq std
 
 B    1011 0PPd dddd PPPP in
 B    1011 1PPr rrrr PPPP out
+
 C    1100 LLLL LLLL LLLL rjmp
 D    1101 LLLL LLLL LLLL rcall
 E    1110 KKKK dddd KKKK ldi

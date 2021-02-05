@@ -5,8 +5,11 @@ If you really do have a hex file that contains valuable information for some rea
 1. Make a backup
 2. Load up something that can do regexs substitutions (I use sublime text and love it)
 
-Maybe it's some compiled piece of proprietary - yet free - software, and it would be just perfect, except that it makes one bad assumpting about how pins will be connected. Maybe it, oh, uses the analog voltage reference - maybe it uses the analog voltage reference pin, while there's a dirt cheap breakout board for the e VREF pin broken out...
-Well - without actually learning any fancy tools, one (*can* manually ("mentally execute") a hex file. It's unpleasant, and slow, and tedious, but sometimes, you've gotta do what you've gotta do. 
+Maybe it's some compiled piece of proprietary - yet free - software that does something incredibly useful like acting as a native USB UPDI programmer, and it runs on a processor that's common and cheap to buy as an assembled board, like a 32u4, and it would be just perfect, except that there's a tiny hardware difference between the common boards, and the one it was designed for. Maybe it, oh, uses the analog voltage reference, which floats on the pro micro but is tied to Vtarget on the hardware this code was written for...
+
+Well - without actually learning any fancy tools, one (*can* manually ("mentally execute") a hex file. It's unpleasant, and slow, and tedious, but sometimes, you've gotta do what you've gotta do. Obviously, you want to narrow down what you have to do as much as possible. Is there a register in the IO space (lowest 64 addresses) that gets read or written which you care about? That'd be an `in` or `out`... Is the pivotal moment a bitflip in the low IO space (lowest 32 addresses)? That could be a `cbi` or `sbi`... Either way, you can calculate what the opcode would be. Registers above 0x0040 (64) are written to (generally) through `sts` and read with `lds` (though `std` and `ldd` are possibilities, as is plain old `st` and `ld` - but usually the compiler isn't smart enough to use the the displaced load/stores, even when we're poking at a peripheral enough that it would be favorable... It's much more willing to use it to access SRAM it seems. Which, for this purpose is good, because you don't want to try to find the place in the hex file where a displaced store is used to write a hardware register!
+
+But first, we need to make it readable...
 
 ## Using RegEx Find and Replace:
 In the following find/replace snippets, you may want to 'view raw' - the spaces around the text are critical to making them work cleanly, every time.... (that's one of the handy things about them, how well they work with the same character that our eyes find to be the best separator.
@@ -201,8 +204,8 @@ The distribution/usage of opcodes is interesting though:
 * 1/32nd conditional branch, 1/32nd skip-if
 
 Do you think this whole thing is silly and impractical? That it's not good for anything except playing armchair-instruction-set-engineer?
-Remember the bit about `lds` and `sts`being particularly useful?
-That's how https://github.com/MCUdude/microUPDIcore/commit/49878acda00474831b03005a3cebbdd498bb4b8c#diff-299fd66b54cb0c05b308b3969047fdd0e17f132cedfd167008fb192dc303a19e happened!
+Remember the opening story of the 32u4 programmer code that's available as hex but not code? That's Microchip's mEDBG. And the bit about `lds` and `sts`being particularly useful?
+That's how https://github.com/MCUdude/microUPDIcore/commit/49878acda00474831b03005a3cebbdd498bb4b8c#diff-299fd66b54cb0c05b308b3969047fdd0e17f132cedfd167008fb192dc303a19e happened, and (what immediately prompted it was that, although I consider myself pretty good at soldering - I found the hardware mod to make the stock f/w work to be nearly impossible to achieve. It went down something like this:
 
-("well, there's only one register on the whole chip that controls whether AREF is used... now that we reformatted the hex so we can read it, let's search for the address - oh, here, 1 match! And sure enough, that's an STS immediately before it, storing r16 to it... uhoh, what value is in r16? could be anything, and how could we clear the key bit without breaking something else? I dunno how to do that, but what's the instruction right before that one? first digit s E, thats an ldi, third digit a zero - oh lookit that, it's an ldi into r16!")
+"well, there's only one register on the whole chip that controls whether AREF is used... now that we reformatted the hex so we can read it, let's search for the address - oh, here, 1 match! And sure enough, that's an STS immediately before it, storing r16 to it... uhoh, what value is in r16? could be anything, and how could we clear the key bit without breaking something else? I dunno how to do that, but what's the instruction right before that one? first digit s E, thats an ldi, third digit a zero - oh lookit that, it's an ldi into r16! Then, I opened up a clean copy of the file, searching for the swapped-order bytes I needed to change, turned the appropriate 1 into a 0, adjusted the checksum, and Bam! Problem solved!
 

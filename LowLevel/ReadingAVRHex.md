@@ -112,8 +112,8 @@ Only call/rcall/icall, ret/reti, jmp/rjmp/ijmp, and the Branch instructions can 
 Numerical order
 ```
 
-0    0000 0000 0000 0000 nop
-0    0000 0000 xxxx yyyy unused except
+0000 0000 0000 0000 0000 nop
+00   0000 0000 xxxx yyyy unused except
 01   0000 0001 dddd rrrr movw
 02   0000 0010 dddd rrrr muls
 03   0000 0011 yddd zrrr mulsu/fmul*
@@ -154,9 +154,9 @@ Numerical order
 9409 1001 0100 0000 1001 ijmp
 9509 1001 0101 0000 1001 icall 
 940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
-9    1001 010k kkkk 110k jmp (>128k flash, followed by address)
+9    1001 010k kkkk 110k jmp (>128k flash, followed by address - looks like max is only 512k xmega? So 940D possible on 2560, 941C/941D on 512k parts.
 940E 1001 0100 0000 1110 call (<128k flash, followed by address)
-9    1001 010k kkkk 111k call (>128k flash, followed by address)
+9    1001 010k kkkk 111k call (>128k flash, followed by address) - 940F possible on 2560, 941E/941F on 512k parts.
 
 9508 1001 0101 0000 1000 ret
 9518 1001 0101 0001 1000 reti
@@ -188,20 +188,39 @@ E    1110 KKKK dddd KKKK ldi
 
 F    1111 00ll llll lsss brbs
 F    1111 01ll llll lsss brbc
+all the branch instructions are just special cases of brbs or brbc
 
 F    1111 100d dddd 0sss bld
 F    1111 101d dddd 0sss bst
 F    1111 110r rrrr 0sss sbrc
 F    1111 111r rrrr 0sss sbrs
+And these are bit-level access to registers
+Also, half of this block is actually unused? Bit 3 could be a 1.
+Apparently 0xFF is treated an sbrs though - skip if bit 7 in register 31 is 1? They *seriously* should 
+have 'special-case'ed that one to be a nop, so  execution would skid along the 0xFF of empty flash, not 
 
 ```
 
-The distribution/usage of opcodes is interesting though: 
+## Okay, I found what needs to change
+Some time I'll write about the process of hackign something up in greater detail; key points are:
+Try to just change a value. If you can't do that, try to just change similar instructions. 
+If you can'd do either of those things, can you tinker with existing control flow  to get what you want? There is an unfortunate possibility that you might need to actually ADD code. Which is particularly painful, but do-able: replace two instructions with a `call` to empty flash, and proceed to act like you're writing a naked ISR. Any register you cannot determine is unneeded at the time of making that call must be preserved. (though, carefuly study wi
+
+The importance of minding the SREG is hard to overstate: all control flow is based on it, with the exception of two families of "skip-ifs" 
+
+## For Armchair ISA Designers
+ISA = Instruction Set Artchitecture 
+
+If - like any engineer-type - your first thought is "Huh, those guys made such a bad decision, I could totally do it better" - maybe you even day-dream about how you'd design a better architecture... Well, it's way better to have some familiarity with an example of what you imagine designing, right?
+
+One thing that's interesting to note is the distribution/usage of opcodes (or rather, which instructions eat up huge chunks of the 16-bit number for each instruction)
 * 3/8ths of the instruction-space is taken up with `xxxx-immediate` instructions! (ever wonder why only work on the top 16 registers? Now you know - not enough bits in a 16-bit instruction to let these take up any more of the instruction-space than they already do
 * 1/8th is load/set with displacement (well, if you were ever wondering why they don't have an X-register version of those, there's your answer! 
 * 3/16ths or so math and logical/arithmatic operations.
 * rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th. 
 * 1/32nd conditional branch, 1/32nd skip-if
+
+## Yes, this is viable!
 
 Do you think this whole thing is silly and impractical? That it's not good for anything except playing armchair-instruction-set-engineer?
 Remember the opening story of the 32u4 programmer code that's available as hex but not code? That's Microchip's mEDBG. And the bit about `lds` and `sts`being particularly useful?

@@ -8,7 +8,7 @@ There are two very easy ways to get UPDI programming hardware for $3 or less.
 As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial adapter and 4.7k resistor!
 #### Serial adapter requuirements
 Almost any cheaper-than-dirt serial adapter can be use d for pyupdi style programer, as long as you take care to avoid these pitfalls:
-1: The FTDI FT232, (both the genuine ones, and the fakes) are known to be SLOW. It looks like they wait for more data to come to send it all at once more "efficiently"?
+1. The FTDI FT232, (both the genuine ones, and the fakes) are known to be SLOW. It looks like they wait for more data to come to send it all at once more "efficiently"?
 2. Many serial adapters have a resistor, typically between 1k and 2.2k in series with their TX line; If yours has one, just reduce the value of the resistor between Tx and Tx by about that much if you go the resistor-only method. If you use a diode, instead which you should, an adapter with a resistor like this on it means one fewer part to solder. 
 3. Some serial adapters have a dedicated LED to indicate receiving. While some fancy chips have an I/O pin that drives the RX led (the FT232 has that feature I think), a cheap adapter with an RX LED may have just put an LED and resistor on the RX line. The load from an LED on the UPDI line will overwhelm any signal and prevent communication  (a LED on TX wired like that is fine as long as it is connected to Tx before the series resistor  - which is a design flaw I've not seen in circulating poorly designed serial adapters; and I've seen a lot of badly designed serial adapters.)
 

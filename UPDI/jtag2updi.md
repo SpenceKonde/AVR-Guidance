@@ -1,4 +1,4 @@
-# Step-by-step guide to turn a uno/nano/pro mini into a UPDI programmer
+# Step-by-step guide to turn serial adapter or uno/nano/pro mini into a UPDI programmer
 
 The tinyAVR 0/1/2-series, megaAVR 0-series, and AVR Dx-series parts are programmed through the Unified Program and Debug Interface (UPDI). This is a 1-wire interface using the UPDI pin on the AVR Dx-series part. A UPDI programmer is required to to change the fuses ("burn bootloader"), upload a bootloader (if desired) and upload sketches if a bootloader is not in use. The classic ISP programmers cannot be used - only UPDI can be used to program these parts.
 
@@ -9,6 +9,7 @@ As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial ad
 Connections:
 * Vcc, Gnd of serial adapter to Vcc, Gnd of target
 * 4.7k resistor between Tx and Rx of adapter (many adapters have built-in 1k, 1.5k, or 2.2k resistor in series with Tx; these should use a proportionally smaller resistor)
+  * For better results, a smaller resistor (that built-in one on most adapters, mentioned above, will do perfectly here) and a small schottky diode (bamd towards tx, other end connected to Rx) can be used (use a "small signal diode" - larger general purpose diodes may have properties that make them less suitable for this) The diode substantially widens the tolerances of this programming method, and significantly improves reliability. 
 * Rx of adapter to UPDI pin of target. A small resistor (under 1k - like the 470 ohm one we generally recommend) in series with this is fine.
 
 Choose "Serial Port and 4.7k" from the Tools -> Programmer menu, and select the Serial Port from the Tools -> Port menu.

@@ -5,17 +5,20 @@ The tinyAVR 0/1/2-series, megaAVR 0-series, and AVR Dx-series parts are programm
 ## Two ways to make a UPDI adapter
 There are two very easy ways to get UPDI programming hardware for $3 or less.
 ### From a serial adapter
-As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial adapter and 4.7k resistor!
+As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial adapter and a schottky diode! (or a 4.7k resistor - but the diode works better)
+
+As of megaTinyCore 2.3.2 and DxCore 1.3.6, these are much faster than jtag2updi, and are the recommended method of programming.
 #### Serial adapter requirements
 Almost any cheaper-than-dirt serial adapter can be used for pyupdi style programmer, as long as you take care to avoid these pitfalls:
-1. The FTDI FT232, (both the genuine ones, and the fakes) are known to be SLOW. It looks like they wait for more data to come to send it all at once more "efficiently"?
-2. Many serial adapters have a resistor, typically between 1k and 2.2k in series with their TX line; If yours has one, just reduce the value of the resistor between Tx and Tx by about that much if you go the resistor-only method. If you use a diode, instead which you should, an adapter with a resistor like this on it means one fewer part to solder. 
+1. The FTDI FT232, (both the genuine ones, and the fakes) are by default configured to use less CPU time, but this absolutely destroys performance. You can easily fix this (at least on windows - I'm not sure if the problem even happens on Linux): Open device manager, under Ports (COM and LPT), locate the FTDI adapter. Right click -> properties. Click the Port Settings tab, and then the Advanced button. Middle of left hand side, set "Latency timer" to 1ms). Click OK enough times to leave the dialog. you'll see the adapter disappear and reappear as the change is appliedf. Configured properly, the FT232RL performs better than all but one adapter I tested, and is far more reluable and less fiddly than that one.
+2. Many serial adapters have a resistor, typically between 1k and 2.2k in series with their TX line; If yours has one, just reduce the value of the resistor between Tx and Tx by about that much if you go the resistor-only method. If you use a diode instead which you should, an adapter with a resistor like this is preferred in that case, you only need to connect the diode, as the builtin resistor will replace any external one.r. 
 3. Some serial adapters have a dedicated LED to indicate receiving. While some fancy chips have an I/O pin that drives the RX led (the FT232 has that feature I think), a cheap adapter with an RX LED may have just put an LED and resistor on the RX line. The load from an LED on the UPDI line will overwhelm any signal and prevent communication  (a LED on TX wired like that is fine as long as it is connected to Tx before the series resistor  - which is a design flaw I've not seen in circulating poorly designed serial adapters; and I've seen a lot of badly designed serial adapters.)
 
 #### Connections:
 * Vcc, Gnd of serial adapter to Vcc, Gnd of target
 * 4.7k resistor between Tx and Rx of adapter (many adapters have built-in 1k, 1.5k, or 2.2k resistor in series with Tx; these should use a proportionally smaller resistor)
   * For better results, a smaller resistor (that built-in one on most adapters, mentioned above, will do perfectly here) and a small schottky diode (band towards Tx, other end connected to Rx) can be used (use a "small signal diode" - larger general purpose diodes may have properties that make them less suitable for this) The diode substantially widens the tolerances of this programming method, and significantly improves reliability. 
+   * My top pick here is the BAT54C,235; it's in as tiny SOT-23 package (it's 2 diodes both weith the "band" towards the pin thats' alone on one side) Why? Because, assuming your serial adapter has the pins on 0.1" header, and TX and RX are next to eachother (both extremely common) the the diode fits right in beteeen them. and with no lead that could later fatigue and break the result is less likely to be damaged by rough handling. Then if I want to more ovbviously maek it as a UPDI programmer, I might cut off the Tx, DTR and CTS pin
 * Rx of adapter to UPDI pin of target. A small resistor (under 1k - like the 470 ohm one we generally recommend) in series with this is fine.
 
 Choose "Serial Port and resistor or diode" from the Tools -> Programmer menu, and select the Serial Port from the Tools -> Port menu.

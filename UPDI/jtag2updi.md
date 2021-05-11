@@ -3,6 +3,11 @@
 The tinyAVR 0/1/2-series, megaAVR 0-series, and AVR Dx-series parts are programmed through the Unified Program and Debug Interface (UPDI). This is a 1-wire interface using the UPDI pin on the AVR Dx-series part. A UPDI programmer is required to change the fuses ("burn bootloader"), upload a bootloader (if desired) and upload sketches if a bootloader is not in use. The classic ISP programmers cannot be used - only UPDI can be used to program these parts. Luckily it is much easier to make a UPDI programmer than an ISP programmer!
 
 There are two very easy ways to get UPDI programming hardware for $3 or less.
+
+
+
+
+
 ## From a serial adapter (recommended)
 As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial adapter and a schottky diode! (or a 4.7k resistor - but the diode works better)
 
@@ -17,13 +22,41 @@ Almost any cheaper-than-dirt serial adapter can be used for pyupdi style program
 * Vcc, Gnd of serial adapter to Vcc, Gnd of target
 * 4.7k resistor between Tx and Rx of adapter (many adapters have built-in 1k, 1.5k, or 2.2k resistor in series with Tx; these should use a proportionally smaller resistor)
   * For better results, a smaller resistor (that built-in one on most adapters, mentioned above, will do perfectly here) and a small schottky diode (band towards Tx, other end connected to Rx) can be used (use a "small signal diode" - larger general purpose diodes may have properties that make them less suitable for this) The diode substantially widens the tolerances of this programming method, and significantly improves reliability. 
-   * My top pick here is the BAT54C,235; it's in as tiny SOT-23 package (it's 2 diodes both weith the "band" towards the pin thats' alone on one side) Why? Because, assuming your serial adapter has the pins on 0.1" header, and TX and RX are next to eachother (both extremely common) the the diode fits right in beteeen them. and with no lead that could later fatigue and break the result is less likely to be damaged by rough handling. Then if I want to more ovbviously maek it as a UPDI programmer, I might cut off the Tx, DTR and CTS pin
+   * My top pick here is the BAT54C,235; it's in as tiny SOT-23 package (it's 2 diodes both weith the "band" towards the pin thats' alone on one side) Why? Because, assuming your serial adapter has the pins on 0.1" header, and TX and RX are next to eachother (both extremely common) the the diode fits right in beteeen them. and with no lead that could later fatigue and break the result is less likely to be damaged by rough handling. Then if I want to more ovbviously mark it as a UPDI programmer, I might cut off the Tx, DTR and CTS pin; always remember that you can get serial adapters for a buck a piece on ebay. 
 * Rx of adapter to UPDI pin of target. A small resistor (under 1k - like the 470 ohm one we generally recommend) in series with this is fine.
 
 Choose "Serial Port and resistor or diode" from the Tools -> Programmer menu, and select the Serial Port from the Tools -> Port menu.
 
-Note that this does not give you serial monitor - you need to connect a serial adapter the normal way for that (I suggest using two, along with an external serial terminal application). This technique works with those $1 CH340 serial adapters from ebay, aliexpress, etc. Did you accidentally buy some that didn't have a DTR pin broken out, and so weren't very useful with the Pro Minis you hoped to use them with?
-Connections:
+Note that this does not give you serial monitor - you need to connect a serial adapter the normal way for that (I suggest using two, along with an external serial terminal application). This technique works with those $1 CH340 serial adapters from ebay, aliexpress, etc. Did you accidentally buy some that didn't have a DTR pin broken out, and so weren't very useful with the $2 Pro Minis you hoped to use them with? They're perfect for this. Although the CH340 parts have the lowest performance, the difference between parts is now quite small (this was not the case prior to the optimization leading up to the 2.3.2 release, before which the speeds ranged from 125 bytes per second to just over 1k. 
+
+
+### Upload and verify performance
+
+  BAUD    |  FT232RL  kb/s   |   CP2102  kb/s   |   CH340  kb/s    |  HT42B534  kb/s   | 
+----------|------------------|------------------|------------------|-------------------|
+115200    |   8.7 W /  8.8 R |   8.7 W /  8.8 R |  8.4 W /  8.5 R  |   9.0 W /  9.1 R  |
+230400    |  16.6.W / 16.4 R |  16.3 W / 16.5 R | 14.6 W / 16.6 R  |  17.7 W / 17.9 R  |
+345600*   |  24.3 W / 23.4 R |  23.2 W / 23.0 R | 22.5 W / 22.1 R  |    UNSUPPORTED    |
+460800**  |       N/A        |        N/A       |       N/A        |   24.7W / 32.7 R  |
+** HT42B534 was run using a 32-byte bloxk aiZe, as one will outrun the NVM controller writing at 460800 baud - I just had to see how it compared to the FT232RL. Both of them are running right up at the limit of the chip's ability to write data to the flash - and the FT232RL doesn't need any special measures taken and works with the tinyAVR parts too. On the other hand, the HT42B534 leads the pack at the (new as of 1.3.6) default of 230400 baud, and is dirt cheap (CH340-level prices).
+
+For comparison, on the Dx-series parts (which are easier to use as test subjects since they have more flash, so uploads take longer and are easier to time. These numbers were taken using a 128k test image, which is an optimal situation.
+
+Programmer      |  Read    | Write    | Notes                             |
+----------------|----------|----------|-----------------------------------|
+jtag2updi       | 6.6 kb/s | 5.9 kb/s | Running on 16 MHz Nano            |
+Curiosity Nano  | 5.9 kb/s | 3.3 kb/s | Via avrdude - which is not ideal  |
+Optiboot Dx     |10.6 kb/s | 6.9 kb/s | 115200 baud as supplied by DxCore |
+
+Becausae of the smaller page sizes, ATtiny parts are slower to program, the two write numbers are for parts with 64 byte and 128 byte pages, respectively.
+
+  BAUD    |  FT232RL  kb/s     |   CP2102* kb/s     |    CH340  kb/s      |  HT42B534  kb/s   |
+----------|--------------------|--------------------|---------------------|-------------------|
+115200    | 4.6,6.2 W /  8.8 R | 4.3,6.2 W /  8.8 R | 3.6,5.2 W /  8.5 R  | 3.6,7.2 W / 9.1 R |
+230400    |7.5,10.0 W / 16.5 R | 7.1,9.6 W / 16.4 R | 4.9,7.8 W / 15.6 R  |  Errors out       |
+345600*   |9.1,13.6 W / 23.4 R |8.5,13.2 W / 23.1 R | 5.6,9.5 W / 22.0 R  |  UNSUPPORTED      |
+460800    |10.4,15.6 W/ 28.2 R |    Not tested      |6.0,10.4 w / 26.8 R  |  Errors out       |
+* The CP2102 does not, by default, support any speeds between 256kbaud and 460800 baud - but a free configuration utility from Silicon Labs enables customization of the baud rates in each range of requested speeds (though unfortunately, you can't define those ranges). I reconfigured mine for 345600 baud for development of with the Dx-series parts, which don't work at 460800, and did not bother to set it back to factory settings just to fill in the table; I would expect to see approximately 10kb/s and 15kb/s write speeds and around 26kb/s read speed. 
 
 
 ## From a nano or pro mini

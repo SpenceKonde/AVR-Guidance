@@ -10,23 +10,12 @@ these parts. Luckily it is much easier to make a UPDI programmer than an ISP
 programmer!
 
 There are two very easy ways to get UPDI programming hardware for $3 or less.
-## First - so you want to make a 3-pin connector? Great!
-If you are using unpolarized connectors, like, say, dupont connectors (which can be plugged in backwards) there is a correct order for the pins:
+
+When making a 3-pin cable, we recommend this pinout:
 
 UPDI - GND - VCC    (or equivalently, VCC - GND - UPDI).
 
-Why is that pinout the best?
-
-The pin order UPDI-Gnd-Vcc is the safest of the three possible orders, because it is the hardest to cause damage if the connector is plugged in backwards, because *you, the designer* will do that=. Anyone other than you do it all the time.
-
-There's a human instinct to put power and ground on opposite sides - with a non-polarized connector, resist that urge: nothing lets smoke out faster than connecting the power supply to a digital circuit backwards. This applies even to a polarized connector that can, with force, be jammed in the wrong way. Yes, that happens in the field.
-
-Generally, the only times something survives reversed polarity for more that an instant is that the uncontrolled current flow triggers over-current protection of some sort, unless the device is specifically designed to survive such abuse.
-
-Since the idle state of UPDI is HIGH, it's safest to have the pins that get swapped when it is plugged in backwards be Vcc and UPDI. If the device is externally powered, the software will know that something is wrong when it writes to it's TX pin and doesn't see that on it's RX (in most wiring configurations) nor get a reply. If device is not, then only a small current will flow through.
-
-Never design a cable that can physically be plugged in backwards but would cause damage if it was. (And if you do anyway, don't bring them into mass production and sell them)
-
+For the simple reason that it minimizes the chance of damage if it is plugged in backwards. 
 
 
 # Serial-UPDI: UPDI programmer from serial adapter (recommended)
@@ -34,9 +23,10 @@ As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial ad
 As of megaTinyCore 2.3.2 and DxCore 1.3.6, these are much faster than jtag2updi, and are the recommended method of programming.
 
 ### Required components
-1 USB serial adapter These can be had for as low as $1 on ebay and aliexpress based on the CH340G, slightly more for CP2102
-1 fast signal schottky diode such as a 1N4148 or any of many others (recommended) or a resistor (see below to figure out value)).
-1 resistor, a few hundred ohms - 220 to 1k, even 2k is fine (may not be needed). A few jumper wires.
+1. A USB serial adapter These can be had for as low as $1 on ebay and aliexpress based on the CH340G, slightly more for CP210. Ideally, you want to dedicate a serial adapter to this purpose for ease of use, rather than havign to connect and disconnect things every rtime you want to use it. 
+1. a fast signal schottky diode such as a 1N4148 or any of many others (recommended) or a resistor (see below to figure out value)).
+1. 1 resistor, a few hundred ohms - 220 to 1k, even 2k is fine (may not be needed). 
+2. A few jumper wires.
 
 ### Serial adapter requirements
 Almost any serial adapter can be used for pyupdi style programmer, as long as you take care to avoid these pitfalls:
@@ -311,7 +301,7 @@ For the Dx-series parts as shown in the above table, with the full suite of opti
 
 For tinyAVR, T<sub>read</sub> is the same as Dx, but T<sub>write</sub> is far worse - not only is pagesize smaller but `n` 4 instead of 2 so `C` is twice as high. At 460800 baud, the second term is about a third the magnitude of the first for write (and the tinies will accept writes at 691.2 kbaud). The important thing to keep in mind is that these chips still program in seconds - and the page write is being committed during the time that one of these pauses is ongoing.
 
-## From a nano or pro mini
+# jtag2updi - UPDI programmer from a Nano or Pro Mini
 A completely different approach is to use an Arduino sketch is available to turn ATmega328(p)-based Arduino’s, like the Arduino UNO and Nano, into a UPDI programmer (it does not work on boards based on other parts, like the 32u4 (Micro/Leo) or any non-AVR board). The following steps show how to make one of these programmers. While this was previously our recommended programmer, SerialUPDI is now more reliable, is cheaper to build, and performs better than jtag2updi, even on the tinyAVR parts whose small page sizes should give the advantage to jtag2updi. A major limitation of jtag2updi is that it is limited to approximately half of the used baud rate, since it must retransmit to the target through a software serial port.... and that baud rate in turn is limited to 115200 baud, 8 bit
 
 ### Part 1: Upload the sketch to your Arduino

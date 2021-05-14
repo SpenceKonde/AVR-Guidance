@@ -15,7 +15,7 @@ When making a 3-pin cable, we recommend this pinout:
 
 UPDI - GND - VCC    (or equivalently, VCC - GND - UPDI).
 
-For the simple reason that it minimizes the chance of damage if it is plugged in backwards. 
+For the simple reason that it minimizes the chance of damage if it is plugged in backwards.
 
 
 # Serial-UPDI: UPDI programmer from serial adapter (recommended)
@@ -23,9 +23,9 @@ As of DxCore 1.3.0 and megaTinyCore 2.2.6, it is now possible to use a serial ad
 As of megaTinyCore 2.3.2 and DxCore 1.3.6, these are much faster than jtag2updi, and are the recommended method of programming.
 
 ### Required components
-1. A USB serial adapter These can be had for as low as $1 on ebay and aliexpress based on the CH340G, slightly more for CP210. Ideally, you want to dedicate a serial adapter to this purpose for ease of use, rather than havign to connect and disconnect things every rtime you want to use it. 
+1. A USB serial adapter These can be had for as low as $1 on ebay and aliexpress based on the CH340G, slightly more for CP210. Ideally, you want to dedicate a serial adapter to this purpose for ease of use, rather than havign to connect and disconnect things every rtime you want to use it.
 1. a fast signal schottky diode such as a 1N4148 or any of many others (recommended) or a resistor (see below to figure out value)).
-1. 1 resistor, a few hundred ohms - 220 to 1k, even 2k is fine (may not be needed). 
+1. 1 resistor, a few hundred ohms - 220 to 1k, even 2k is fine (may not be needed).
 2. A few jumper wires.
 
 ### Serial adapter requirements
@@ -78,9 +78,9 @@ Ideal:
 internal resistor in adapter: 2.2k >= Ra
 resistor on target:   2k >= Rt >= 100 (100-470 rec.)
 
---------------------                                 To Target device.
+--------------------                                 To Target device
                 DTR|                                  __________________
-    internal    Rx |--------------,------------------| UPDI---\/\/---->
+    internal    Rx |--------------,------------------| UPDI---\/\/---------->
   Tx---/\/\/\---Tx |-------|<|---'          .--------| Gnd    470 ohm (100 ~ 1k)
     resistor    Vcc|---------------------------------| Vcc
   typ 1-2k      CTS|                     .`          |__________________
@@ -95,9 +95,9 @@ Near Ideal:
 Yes internal resistor in adapter: 2.2k >= Ra
 No resistor on target
 
---------------------                                 To Target device.
+--------------------                                 To Target device
                 DTR|                                  __________________
-    internal    Rx |--------------,------------------| UPDI----------->
+    internal    Rx |--------------,------------------| UPDI----------------->
   Tx---/\/\/\---Tx |-------|<|---'          .--------| Gnd
     resistor    Vcc|---------------------------------| Vcc
   typ 1-2k      CTS|                     .`          |__________________
@@ -111,7 +111,7 @@ Yes resistor on target: small, under 2k
 
 Also works great, convenient if still using jtag2updi without resistor built into it. Resistorss should sum to less than 4.7k, preferalby much less
 
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                                  __________________
     internal    Rx |--------------,------------------| UPDI----\/\/\/---->
   Tx---/\/\/\---Tx |-------|<|---'          .--------| Gnd     < 2.2k
@@ -125,7 +125,7 @@ Yes resistor on target: several k or more:
 This will often by 4.7k: it must be bypassed, replaced with a smaller one or shorted out.
 
 
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|               ,----------------------------------.
     internal    Rx |--------------/                  | UPDI----\/\/\/--*-
   Tx---/\/\/\---Tx |-------|<|---'          .--------| Gnd       4.7k
@@ -139,7 +139,7 @@ This will often by 4.7k: it must be bypassed, replaced with a smaller one or sho
 No internal resistor on adapter.
 Yes resistor on target >= 100 ohms and not more than a few k.
 
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                                  __________________
  No resistor?   Rx |--------------,------------------| UPDI----\/\/\/------>
   Are you sure? Tx |----|<|------`          .--------| Gnd     > 100
@@ -157,7 +157,7 @@ the first and second positions, with nothing between Rx and target UPDI, are sli
 Value of resistor should be a few hundred ohms, I'd default 470.
 
 No internal resistor
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                                  __________________
  No resistor?   Rx |---------------------,--/\/\-----| UPDI---------------->
   Are you sure? Tx |--/\/\---|<|----\/\/'        .---| Gnd
@@ -178,7 +178,7 @@ The PyUPDI classic:
 
                          4.7k resistor
 No internal resistor
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                                  __________________
  No resistor?   Rx |--------------,------------------| UPDI---------------->
   Are you sure? Tx |--/\/\/\/\---`          .--------| Gnd
@@ -190,7 +190,7 @@ No internal resistor
 Very much like the classic, except for the possiility of a resistor on the target. Must be 470 or under on the target.
 
 Resistance should sum to 4.7k
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                                  __________________
     internal    Rx |--------------,------------------| UPDI----\/\/\/------>
   Tx---/\/\/\---Tx |--/\/\/\/\---`          .--------| Gnd     =< 470
@@ -207,7 +207,7 @@ that are too much for it to work using a resistor.
 
 
 The resistor (if any) in serial adapter, and the one you add should total 4.7k.
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|                       ,--------------------------.
     internal    Rx |--------------,-------'          | UPDI----\/\/\/- *--->
   Tx---/\/\/\---Tx |--/\/\/\/\---`          .--------| Gnd       >470
@@ -219,7 +219,7 @@ or no resistor  Gnd|--------------------'
 If there's no resistor in the serial adapter and the target happens to have a 4.7k resistor, you can do it without
 any extrta components, though you've got 4 wires involved instead of 3:
 
---------------------                                   To Target device.
+--------------------                                   To Target device
                 DTR|              .-----------------------------------.
  No resistor?   Rx |-------------'      ,------------| UPDI----\/\/\/--*---->
   Are you sure?-Tx |-------------------'     .-------| Gnd       4.7k
@@ -236,7 +236,9 @@ Why do we want a little bit of resistance (a few hundred) when doing the diode m
 
 ### Software
 
-Choose "Serial Port and resistor or diode" from the Tools -> Programmer menu of a core which supports this upload method (megaTinyCore, DxCore, and soon, MegaCoreX), and select the Serial Port from the Tools -> Port menu.
+Choose a Serial-UPDI option from the Tools -> Programmer menu of a core which supports this upload method (megaTinyCore, DxCore, and soon, MegaCoreX). The tinyAVR core offers 57600 baud, 230400 baud and 460800 baud options. DxCore offers 57600, 230400, 345600 and a "special" 460800 w/chunking for use with the HT42B534 serial adapter, which can't do 345600 baud (and any other adapter runs far more slowly with this option) and select the Serial Port from the Tools -> Port menu.
+
+
 
 Note that this does not give you serial monitor - you need to connect a serial adapter the normal way for that (I suggest using two, along with an external serial terminal application). This technique works with those $1 CH340 serial adapters from ebay, aliexpress, etc. Did you accidentally buy some that didn't have a DTR pin broken out, and so weren't very useful with the $2 Pro Minis you hoped to use them with? They're perfect for this. Although the CH340 parts have the lowest performance, the difference between parts is now quite small (this was not the case prior to the optimization leading up to the 2.3.2 release, before which the speeds ranged from 125 bytes per second to just over 1k.
 
@@ -249,7 +251,7 @@ Note that this does not give you serial monitor - you need to connect a serial a
 230400    |  16.6.W / 16.4 R |  16.3 W / 16.5 R | 14.6 W / 16.6 R  |  17.7 W / 17.9 R  |
 345600*   |  24.3 W / 23.4 R |  23.2 W / 23.0 R | 22.5 W / 22.1 R  |    UNSUPPORTED    |
 460800**  |       N/A        |        N/A       |       N/A        |   24.7W / 32.7 R  |
-** HT42B534 was run using a 32-byte bloxk size, running with finite block size resulted in successful transfers for other parts, though the threshold block size varied - but a massive decrease in overall speed, similar to 115200 baud., as one will outrun the NVM controller writing at 460800 baud - I just had to see how it compared to the FT232RL. Both of them are running right up at the limit of the chip's ability to write data to the flash - and the FT232RL doesn't need any special measures taken and works with the tinyAVR parts too. On the other hand, the HT42B534 leads the pack at the (new as of 1.3.6) default of 230400 baud, and is dirt cheap (CH340-level prices).
+** HT42B534 was run using a 32-byte block size, running with finite block size resulted in successful transfers for other parts, though the threshold block size varied - but a massive decrease in overall speed, similar to 115200 baud., as one will outrun the NVM controller writing at 460800 baud - I just had to see how it compared to the FT232RL. Both of them are running right up at the limit of the chip's ability to write data to the flash - and the FT232RL doesn't need any special measures taken and works with the tinyAVR parts too. On the other hand, the HT42B534 leads the pack at the (new as of 1.3.6) default of 230400 baud, and is dirt cheap (CH340-level prices).
 
 For comparison, on the Dx-series parts (which are easier to use as test subjects since they have more flash, so uploads take longer and are easier to time. These numbers were taken using a 128k test image, which is an optimal situation.
 
@@ -270,7 +272,7 @@ Because of the smaller page sizes, ATtiny parts are slower to program; the small
 * The CP2102 does not, by default, support any speeds between 256kbaud and 460800 baud - but a free configuration utility from Silicon Labs enables customization of the baud rates in each range of requested speeds (though unfortunately, you can't define those ranges). I reconfigured mine for 345600 baud for development of with the Dx-series parts, which don't work at 460800, and did not bother to set it back to factory settings just to fill in the table; I would expect to see approximately 10kb/s and 15kb/s write speeds and around 26kb/s read speed.
 
 #### Observations on Speed
-The following is based on the numbers above, test data not included, as well as examination of oscilloscope trace. Note that the 460800 baud data for the Dx-series is not directly comparable as it uses blocksize to artificially slow the writes to prevent overrunning the buffer which the chip empties at a constant rate.
+The following is based on the numbers above, test data not included, as well as examination of oscilloscope trace. Note that the 460800 baud data for the Dx-series is not directly comparable as it uses blocksize to artificially slow the writes to prevent overrunning the buffer on the target (which is barely a buffer) which the chip empties at a constant rate.
 
 Approximately, write time can be modeled as:
 T = ceil(size / pagesize) * C + size / (baud in bits/sec / 12 bits/byte)
@@ -300,6 +302,7 @@ T<sub>read</sub> is the same on all parts; an unimplemeneted change could push i
 For the Dx-series parts as shown in the above table, with the full suite of optimization, T<sub>read</sub> = T<sub>write</sub> (the same change is likely possible here; the improvement is maybe 10%)
 
 For tinyAVR, T<sub>read</sub> is the same as Dx, but T<sub>write</sub> is far worse - not only is pagesize smaller but `n` 4 instead of 2 so `C` is twice as high. At 460800 baud, the second term is about a third the magnitude of the first for write (and the tinies will accept writes at 691.2 kbaud). The important thing to keep in mind is that these chips still program in seconds - and the page write is being committed during the time that one of these pauses is ongoing.
+
 
 # jtag2updi - UPDI programmer from a Nano or Pro Mini
 A completely different approach is to use an Arduino sketch is available to turn ATmega328(p)-based Arduino’s, like the Arduino UNO and Nano, into a UPDI programmer (it does not work on boards based on other parts, like the 32u4 (Micro/Leo) or any non-AVR board). The following steps show how to make one of these programmers. While this was previously our recommended programmer, SerialUPDI is now more reliable, is cheaper to build, and performs better than jtag2updi, even on the tinyAVR parts whose small page sizes should give the advantage to jtag2updi. A major limitation of jtag2updi is that it is limited to approximately half of the used baud rate, since it must retransmit to the target through a software serial port.... and that baud rate in turn is limited to 115200 baud, 8 bit

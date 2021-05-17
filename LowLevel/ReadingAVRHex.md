@@ -166,14 +166,16 @@ Numerical order
 
 96   1001 0110 KKdd KKKK adiw
 97   1001 0111 KKdd KKKK sbiw
+
 98   1001 1000 pppp psss cbi
 99   1001 1001 pppp psss sbic
+
 9A   1001 1010 pppp psss sbi
 9B   1001 1011 pppp psss sbis
 
 9C   1001 11rd dddd rrrr mul
-~
-9F   1001 11rd dddd rrrr mul   
+9D, 9E, 9F
+   
 
 A    10q0 qq0r rrrr bqqq ldd
 A    10q0 qq1r rrrr bqqq std

@@ -13,15 +13,15 @@ Of course, before you go using something like this, think about whether you woud
     "rjmp .+2" "\n\t"     // 2 cycles - jump over next instruction.
     "ret" "\n\t"          // 4 cycles - rjmped over initially...
     "rcall .-4");         // 2 cycles - ... but then called here
-                          // wait 8 cycles with 3 words
+                          // wait 8 (modern AVR) or 9 (classic AVR) cycles with 3 words
 
   __asm__ __volatile__ (
     "rjmp .+2" "\n\t"     // 2 cycles - jump over next instruction.
     "ret" "\n\t"          // 4 cycles - rjmped over initially...
     "rcall .-4" "\n\t"    // 2 cycles - ... but then called here...
     "rcall .-6");         // 2+4 cycles - ... and again here
-                          // wait 14 cycles with 4 words                
-    // More generally, wait 8 + 6*N cycles in 3+N words - 14 in 4, 20 in 5, etc. 
+                          // wait 14 (modern AVR) or 16 (classic AVR) cycles with 4 words                
+    // More generally, wait 8 + 6*N (or 9 + 7*N) cycles in 3+N words - 14/16 in 4, 20/23 in 5, etc. 
     uint8_t cycles_divided_by_3 = 10; // 1 cycle, assuming you have a working register...
   __asm__ __volatile__ (
     "1: dec %0" "\n\t"  // 1 cycle

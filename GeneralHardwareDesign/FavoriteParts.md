@@ -6,7 +6,9 @@ I will cover these in reverse order, as the "where to source" will (eventually) 
 ## Sourcing
 Some things, only a madman or someone with more money than sense would buy from those "reputable western distributors" - they can be sourced direct from China with little sacrifice except shipping time from AliExpress, eBay international sellers, or other such marketplaces. There are other things that only madman or an "easy mark"`*` would buy from China direct, and which is better bought through reputable western distributors or the manufacturer directly. It's actually pretty straightforward. 
 
-One thing to remember is that the slope of the price vs quantity graph is far shallower over there (no clue why - I know it's not when you're having them make custom PCBAs. It may just be that the marketplace sellers buy everything by the reel, and are just competing on price, so the prices of any quantity tends towards the unit price in reel-quantities). While the premium that Digikey demands for one of something is often eye-watering, the discounts to be had on AliExpress from buying a thousand of something instead of 5 or 10 can be vanishingly small.
+One thing to remember is that the slope of the price vs quantity graph is far shallower over there (no clue why - I know it's not when you're having them make custom PCBAs. It may just be that the marketplace sellers buy everything by the reel, and are just competing with each other on price, so the prices of any quantity tends towards the unit price in reel-quantities). While the premium that Digikey demands for one of something is often eye-watering, the discounts to be had on AliExpress from buying a thousand of something instead of 5 or 10 are small, sometimes almost non-existant!
+
+Another thing to remember is that 1-3% of packages go missing in the best of times. Sometimes the seller will reship or refund them, other times you get nothing but broken english and broken promises. If you actually receive the item (not some other item with the same tracking number pasted on it - which has happeneed to me; I got some cheap women's swimware instead of a roll of wire), you will have a really hard time getting a refund if it turns out to be crap. Don't make purchases that you can't afford to eat the cost of. 
 
 `*` An "Easy Mark" is con-man lingo for someone who's going to be easy to rob.
 ### Integrated Circuits
@@ -33,7 +35,7 @@ SMD crystals (the small ones. eg, 5032 and smaller) are available from china for
 The prices in china *bury* the western suppliers. You want to get those from China. Electromechanical gizmos and purely mechanical stuff is invariably cheaper from the chiense vendors, *often by an order of magnitude*. 
 
 ## LEDs
-As with electromechanical stuff, LEDs are virtually always cheaper to get direct from china, and the price differeces are among the largest I've seen for electronics, probably the largest. I cannot fathom who the hell is paying Digikey and their suppliers 50+ cents for a single SMD LED instead of buying it for half a cent from China, but it's apparently enough to justify the catalog space they take up. 1206 LEDs were the first part that I bought a full reel of, as it happens - it was something absurd like $5 or something, so cheap that it wasn't even worth it to buy less than a damned reel.
+As with electromechanical stuff, LEDs are virtually always cheaper to get direct from china, and the price differeces are among the largest I've seen for electronics, probably the largest. I cannot fathom who the hell is paying Digikey and their suppliers 50+ cents for a single SMD LED instead of buying it for half a cent from China, but it's apparently enough to justify the catalog space they take up. 1206 LEDs were the first part that I bought a full reel of. They wound up being so insanely cheap that I was like "screw remembering to restock LEDs" and snagged a reel each of the colors I use. 
 
 ## Discrete semiconductors
 "And now, ladies and gentlemen, let's be extra careful, as we're about to walk onto the casino floor..."
@@ -47,4 +49,6 @@ Never buy a "transistor kit" or "diode kit". Not from anywhere. Those kits are f
 
 ## Favorites and recommendations
 ### Tact pushbuttons
-The 3x6mm ones are my usual go to, the ones that normally hae either a white or red button. EziUsin on Aliexpress has them in all the colors of the rainbow for only a small premium (and other sellers have them for exorbitant premiums. If I need a tall button extension, I use the 6x6mm ones, while if board space is an issue, there's a 3x3 line. You can get all manner of bizarro buttons, but.... why....? These are common, cheap, and durable. 
+The 3x6mm ones are my usual go to, the ones that normally hae either a white or red button. EziUsin on Aliexpress has them in all the colors of the rainbow for only a small premium (and other sellers have them for exorbitant premiums. If I need a tall button, I use the 6 x 6 mm ones (which are available in heights in excess of 24mm), while if board space is an issue, there are some nice 3x3mm buttons with a few heights (nothing particularly tall). You can get all manner of bizarro buttons, but.... why....? These are common, cheap, and durable. 
+
+I would avoid those super thin golden ones - yes, they are super thin, but they are also rather flimsy, and feel awkward to press if you don't have something between your finger and the button - which, in fact, is what you're supposed to have. Do you really need a 1mm thick button? Rarely, sure yes one might. But it's an exotic use case. 

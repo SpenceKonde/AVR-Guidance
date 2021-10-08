@@ -226,8 +226,8 @@ One thing that's interesting to note is the distribution/usage of opcodes (or ra
 
 ### Slack space calculations
 So how much slack is left in the instruction set? Very, VERY little!
-specifically 1550 instructions, less any undocumented ones.
-2.365% of the instruction space. 
+specifically 2062 instructions, less any undocumented ones.
+96.9% of the instruction space. 
 ```
 By the first letter of the opcode:
 0 - 0x0001~0x00FF are not used, 255 instructions.
@@ -249,8 +249,8 @@ B - Full
 C - Full 
 D - Full 
 E - Full 
-There are 512 options in the 0xFC~FF range, half of that range, the range where the low byte is > 0x7F. 
-512 + 255 + 783 = 1550 open instructions. The instruction space is 97.7% used, and what little space there is fragmented (I bet they wish thy made 0xFFFF the NOOP) - but they weren't thinking about multiplication originally, which shows in how they're shoehorned into the instruction space. They filled most of the biggest holes. 
+There are 1024 options in the 0xF8~FF range, half of that range, the range where the low byte is > 0x7F. 
+1024 + 255 + 783 = 2062 open instructions. The instruction space is 96.9% used, and what little space there is fragmented (I bet they wish thy made 0xFFFF the NOOP) - but they weren't thinking about multiplication originally, which shows in how they're shoehorned into the instruction space. They filled most of the biggest holes. 
 ```
 
 

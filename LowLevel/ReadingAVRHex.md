@@ -113,23 +113,23 @@ Numerical order
 ```
 
 0000 0000 0000 0000 0000 nop
-00   0000 0000 xxxx yyyy unused except
+00   0000 0000 xxxx yyyy unused
 01   0000 0001 dddd rrrr movw
 02   0000 0010 dddd rrrr muls
 03   0000 0011 yddd zrrr mulsu/fmul*
-0    0000 01rd dddd rrrr cpc
-0    0000 10rd dddd rrrr sbc
-0    0000 11rd dddd rrrr add lsl
+04~7 0000 01rd dddd rrrr cpc
+08~B 0000 10rd dddd rrrr sbc
+0C~F 0000 11rd dddd rrrr add lsl (when r=f, lsl)
 
-1    0001 00rd dddd rrrr cpse
-1    0001 01rd dddd rrrr cp
-1    0001 10rd dddd rrrr sub
-1    0001 11rd dddd rrrr adc rol
+10~3 0001 00rd dddd rrrr cpse
+14~7 0001 01rd dddd rrrr cp
+18~B 0001 10rd dddd rrrr sub
+1C~F 0001 11rd dddd rrrr adc (when r=d rol)
 
-2    0010 00rd dddd rrrr and
-2    0010 01rd dddd rrrr eor clr
-2    0010 10rd dddd rrrr or
-2    0010 11rd dddd rrrr mov
+20~3 0010 00rd dddd rrrr and
+24~7 0010 01rd dddd rrrr eor (when r=d, clr)
+28~B 0010 10rd dddd rrrr or
+2C~F 0010 11rd dddd rrrr mov
 
 
 3    0011 KKKK dddd KKKK cpi
@@ -138,27 +138,29 @@ Numerical order
 6    0110 KKKK dddd KKKK ori
 7    0111 KKKK dddd KKKK andi
 
-8    10q0 qq0r rrrr bqqq ldd
-8    10q0 qq1r rrrr bqqq std
+8    10q0 qq0r rrrr bqqq ldd (also A0~A7) - though note that when q = 0, this is ld itself, b chooses between Y and Z registers. 
+8    10q0 qq1r rrrr bqqq std (also A8~AF)
 
 
-9    1001 000r rrrr 0000 lds (followed by address)
-9    1001 000r rrrr xxyy ld (xx = Z 00, lpm 01, Y 10, X 11)
-9    1001 000r rrrr 1111 pop
+90~1 1001 000r rrrr 0000 lds (followed by address)
+90~1 1001 000r rrrr xxyy ld +/- (xx = Z 00, lpm 01, Y 10, X 11. yy sets increment (1) or decrement (2), and for ld X and lpm, 0 = neither (Y and Z use ldd with 0 displacement)
+90~1 1001 000r rrrr 1111 pop
 90, 91 ld/lds/lpm, pop
-9    1001 001r rrrr 0000 sts (followed by address)
-9    1001 001r rrrr xxyy st (yy = + 01, - 10, 00 for X/lpm only)
-9    1001 001r rrrr 1111 push
+92~3 1001 001r rrrr 0000 sts (followed by address)
+92~3 1001 001r rrrr xxyy st +/1 (yy = + 01, - 10, 00 = no increment/decrement for x ONLY)
+92~3 1001 001r rrrr 1111 push
 92, 93 st/sts, push
 
-9409 1001 0100 0000 1001 ijmp
-9509 1001 0101 0000 1001 icall 
 940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
 9    1001 010k kkkk 110k jmp (>128k flash, followed by address - looks like max is only 512k xmega? So 940D possible on 2560, 941C/941D on 512k parts.
 940E 1001 0100 0000 1110 call (<128k flash, followed by address)
 9    1001 010k kkkk 111k call (>128k flash, followed by address) - 940F possible on 2560, 941E/941F on 512k parts.
 
+
+9409 1001 0100 0000 1001 ijmp
+
 9508 1001 0101 0000 1000 ret
+9509 1001 0101 0000 1001 icall 
 9518 1001 0101 0001 1000 reti
 9588 1001 0101 1000 1000 sleep
 95A8 1001 0101 1010 1000 wdr
@@ -177,11 +179,11 @@ Numerical order
 9D, 9E, 9F
    
 
-A    10q0 qq0r rrrr bqqq ldd
-A    10q0 qq1r rrrr bqqq std
+A0~7 10q0 qq0r rrrr bqqq ldd
+A8~F 10q0 qq1r rrrr bqqq std
 
-B    1011 0PPd dddd PPPP in
-B    1011 1PPr rrrr PPPP out
+B0~7 1011 0PPd dddd PPPP in
+B8~F 1011 1PPr rrrr PPPP out
 
 C    1100 LLLL LLLL LLLL rjmp
 D    1101 LLLL LLLL LLLL rcall
@@ -221,6 +223,36 @@ One thing that's interesting to note is the distribution/usage of opcodes (or ra
 * 3/16ths or so math and logical/arithmatic operations.
 * rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th. 
 * 1/32nd conditional branch, 1/32nd skip-if
+
+### Slack space calculations
+So how much slack is left in the instruction set? Very, VERY little!
+specifically 1550 instructions, less any undocumented ones.
+2.365% of the instruction space. 
+```
+By the first letter of the opcode:
+0 - 0x0001~0x00FF are not used, 255 instructions.
+1 - Full 
+2 - Full 
+3 - Full 
+4 - Full 
+5 - Full 
+6 - Full 
+7 - Full 
+8 - Full
+90-91 - of combinations of xx and yy, 4 are invalid. These are when yy == 11 for xx != 11, and yy = 10 and xx == 0 (would be ld Y, but that's over in ldd. Each gives us 128 unused opcodes
+92~93 - of combinations of xx and yy, 7 are invalid - the ones above, plus the 3 associated with valid incarnations of lpm above. That means 224
+94~95 - low nybble C~F is used by long jmp/call, so 64/512 are used that way. 7 additional ones are used for argumentless instructiosn. There are 441 highly fragmented options here. Some are likely used by internal/undocumented functions. 
+96-9F - full.
+9 - 783 highly fragmented instructions, less however many are secretly used to do something different internally. 
+A - Full 
+B - Full 
+C - Full 
+D - Full 
+E - Full 
+There are 512 options in the 0xFC~FF range, half of that range, the range where the low byte is > 0x7F. 
+512 + 255 + 783 = 1550 open instructions. The instruction space is 97.7% used, and what little space there is fragmented (I bet they wish thy made 0xFFFF the NOOP) - but they weren't thinking about multiplication originally, which shows in how they're shoehorned into the instruction space. They filled most of the biggest holes. 
+```
+
 
 ## Yes, this is viable!
 

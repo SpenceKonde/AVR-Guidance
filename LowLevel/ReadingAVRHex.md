@@ -226,8 +226,8 @@ One thing that's interesting to note is the distribution/usage of opcodes (or ra
 
 ### Slack space calculations
 So how much slack is left in the instruction set? Very, VERY little!
-specifically 2062 instructions, less any undocumented ones.
-96.9% of the instruction space. 
+specifically 2008 instructions, less any undocumented ones.
+96.93% of the instruction space. 
 ```
 By the first letter of the opcode:
 0 - 0x0001~0x00FF are not used, 255 instructions.
@@ -241,16 +241,19 @@ By the first letter of the opcode:
 8 - Full
 90-91 - of combinations of xx and yy, 4 are invalid. These are when yy == 11 for xx != 11, and yy = 10 and xx == 0 (would be ld Y, but that's over in ldd. Each gives us 128 unused opcodes
 92~93 - of combinations of xx and yy, 7 are invalid - the ones above, plus the 3 associated with valid incarnations of lpm above. That means 224
-94~95 - low nybble C~F is used by long jmp/call, so 64/512 are used that way. 7 additional ones are used for argumentless instructiosn. There are 441 highly fragmented options here. Some are likely used by internal/undocumented functions. 
+94~95 - low nybble C~F is used by long jmp/call, so 128/512 are used that way, though parts with . 7 additional ones are used for argumentless instructiosn. There are 377 highly fragmented options here. Some are likely used by internal/undocumented functions. 
 96-9F - full.
-9 - 783 highly fragmented instructions, less however many are secretly used to do something different internally. 
+9 - 729 highly fragmented instructions, less however many are secretly used to do something different internally. 
 A - Full 
 B - Full 
 C - Full 
 D - Full 
 E - Full 
 There are 1024 options in the 0xF8~FF range, half of that range, the range where the low byte is > 0x7F. 
-1024 + 255 + 783 = 2062 open instructions. The instruction space is 96.9% used, and what little space there is fragmented (I bet they wish thy made 0xFFFF the NOOP) - but they weren't thinking about multiplication originally, which shows in how they're shoehorned into the instruction space. They filled most of the biggest holes. 
+1024 + 255 + 729 = 2008 open instructions. The instruction space is 96.93% used, and what little space there is fragmented (I bet they wish thy made 0xFFFF the NOOP) - but they weren't thinking about multiplication originally, which shows in how they're shoehorned into the instruction space. They filled most of the biggest holes.
+
+Now it's worth noting that 126 of those are for long jmp/call which can't be used on parts with 128k or less flash. 
+A 256k part would have 124 unused, and a 512k part would stil have 120 unused. As far as I can tell, XMega never exceeded 384k. This is only calculated by subtracting valid combinations, because on a 512k part, low bytes being 1 or 0 is only relevant if all the higher address bits are 0. These parts supposrt 8MByte flash, but haven't been released in versions that use more than 1/16th of that: Long before programs get that large, people are going to switch to a bigger (computationally) part... What the hell sensible use case for an AVR could possibly require 8MB of code? That
 ```
 
 

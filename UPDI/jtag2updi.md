@@ -1,4 +1,4 @@
-# Step-by-step guide to turn serial adapter or uno/nano/pro mini into a UPDI programmer
+# Step-by-step guide to turn a serial adaptyer (CH340G/FT232/etc) or an Uno/Nano/etc into a UPDI programmer
 
 The  tinyAVR 0/1/2-series, megaAVR 0-series, and AVR Dx-series parts are
 programmed through the Unified Program and Debug Interface (UPDI). This is a
@@ -11,11 +11,11 @@ programmer!
 
 There are two very easy ways to get UPDI programming hardware for $3 or less.
 
-When making a 3-pin cable, we recommend this pinout:
+When making a 3-pin cable, if you're controlling how the pins will be laid out on the target, we recommend this pinout:
 
 UPDI - GND - VCC    (or equivalently, VCC - GND - UPDI).
 
-For the simple reason that it minimizes the chance of damage if it is plugged in backwards.
+This is the minimum number of pins required for powering and programming via updi with a single connection, and is the only arrangement of these pins that will not damage the tareget if plugged in backwards.
 
 
 # Serial-UPDI: UPDI programmer from serial adapter (recommended)
@@ -31,7 +31,7 @@ As of megaTinyCore 2.3.2 and DxCore 1.3.6, these are much faster than jtag2updi,
 ### Serial adapter requirements
 Almost any serial adapter can be used for pyupdi style programmer, as long as you take care to avoid these pitfalls:
 1. The FTDI FT232, (both the genuine ones, and the fakes) are by default configured to use less CPU time by polling the adapter less often. For UPDI programming, the performance implications are severe. You can easily fix this (at least on windows - I'm not sure if the problem even happens on Linux): Open device manager, under Ports (COM and LPT), locate the FTDI adapter. Right click -> properties. Click the Port Settings tab, and then the Advanced button. In the middle of left hand side, there is an option called "Latency timer", likely set to 16ms. Set it to 1ms). Click OK enough times to leave the dialog. you'll see the adapter disappear and reappear as the change is applied. Configured properly, the FT232RL has spectacular performance. Configured improperly, the performance is downright abysmal.
-2. MOST SERIAL ADAPTERS ALREADY HAVE THEIR OWN RESISTOR in series with Tx! Typically between 1k and 2.2k; If using the recommended diode method, you need only add the diode, not the second resistor. If you aren't going with the diode method for some reason, use a resistor such that the total is 4.7k (you'll need to measure it with multimeter unless you can follow traces to the resistor and read out the code (the three number codees - first two numbers are the most significant digits, and the third is the number of zeros they are followed by - 222 is 2200 - 2.2k, 471 is 470, (which of course means that 101 means a 100 ohm resistor, and 100 means a 10 ohm one!)).  There are three approaches to measuring all wuith one end of multimeter clipped to Tx. Either look up the pinout of the serial adapter chip online and just measure resistance to that pin, check all the pins on the chip. Many may have very high resistance, but only one will have a value of a few k or less, just go for the ends of the resistors, expecting one to have a 1-2.2k to Tx on one side, and 0 on the other/
+2. Many serial adapters (but not all - it's most common in CH340G's, I think to avoid damaging 3.3v parts that theyt might be used with) in series with Tx! Typically between 1k and 2.2k; If using the recommended diode method, you need only add the diode, not the second resistor. If you aren't going with the diode method for some reason, use a resistor such that the total is 4.7k (you'll need to measure it with multimeter unless you can follow traces to the resistor and read out the code (the three number codees - first two numbers are the most significant digits, and the third is the number of zeros they are followed by - 222 is 2200 - 2.2k, 471 is 470, (which of course means that 101 means a 100 ohm resistor, and 100 means a 10 ohm one!)).  There are three approaches to measuring all wuith one end of multimeter clipped to Tx. Either look up the pinout of the serial adapter chip online and just measure resistance to that pin, check all the pins on the chip. Many may have very high resistance, but only one will have a value of a few k or less, just go for the ends of the resistors, expecting one to have a 1-2.2k to Tx on one side, and 0 on the other/
 (if you actually encounter one without a resistor between Tx and the chip, let me know! I only know of one design circulating in the wild: it's the CH340G on a green PCB with a 3.3v/5v switch and microUSB port; that board appears to be someone's first design - which they have nonetheless been producing for years without revision. The design has 2 very desirable features - voltage switch, and micro USB - and at least 4 severe design flaws.)
 3. Some serial adapters have a dedicated LED to indicate Rx. While some fancy chips have an I/O pin that drives the RX led (the FT232, for example), a cheap adapter with an RX LED may have just put an LED and resistor on the RX line (in fact that's what that above mentioned green boards with switch and microusb port did).. The load from an LED on the UPDI line will overwhelm any signal from the target and prevent communication  (a LED on TX is fine - the adapter has plenty of drive strength.)
 

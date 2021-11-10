@@ -24,7 +24,7 @@ As of megaTinyCore 2.3.2 and DxCore 1.3.6, these are much faster than jtag2updi,
 
 ### Required components
 1. A USB serial adapter These can be had for as low as $1 on ebay and aliexpress based on the CH340G, slightly more for CP210. Ideally, you want to dedicate a serial adapter to this purpose for ease of use, rather than havign to connect and disconnect things every rtime you want to use it.
-1. a fast signal schottky diode such as a 1N4148 or any of many others (recommended) or a resistor (see below to figure out value)).
+1. a fast signal schottky diode such as one of the BAT series (BAT43, BAT54) or any of many others (recommended) or a resistor (see below to figure out value)).
 1. 1 resistor, a few hundred ohms - 220 to 1k, even 2k is fine (may not be needed).
 2. A few jumper wires.
 

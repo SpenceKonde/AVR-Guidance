@@ -273,25 +273,33 @@ Because of the smaller page sizes and the more timeconsuming rigmarole surrounsi
 
 * The CP2102 does not, by default, support any speeds between 256kbaud and 460800 baud - but a free configuration utility from Silicon Labs enables customization of the baud rates in each range of requested speeds (though unfortunately, you can't define those ranges). I reconfigured mine for 345600 baud for development of with the Dx-series parts, which don't work at 460800, and did not bother to set it back to factory settings just to fill in the table; I would expect to see approximately 10kb/s and 15kb/s write speeds and around 26kb/s read speed. T
 
+(the above two charts were taken with 1.1.0.)
+
 In this case, S<sub>prog(64)</sub> = 2/3 S<sub>prog(128)</sub>, so t<sub>prog(16k)</sub> = 3/4 * t<sub>prog(32k)</sub>)  (t<sub>prog(16k)</sub> = (16/32) * t<sub>prog(32k)</sub>)/(S<sub>prog(64)</sub>/S<sub>prog(128)</sub>) = t<sub>prog(32k)</sub>) * (3/2)(1/2).)
 
 No modern AVRs exist with page sizes of less than 64 bytes. Only 64b, 128b, and 512b exist. While many expected a page size of 256b for the DD-series - the most recent ATpacks show 512 (then again, they have other stuff copy-pasted from the DA/DB too still).
 
-| Part Series         |  Flash range |  Page size | Writes by | Max. Speed R, W | Full Write | 230400 |
-|---------------------|--------------|------------|-----------|-----------------|------------|--------|
-| tinyAVR 0/1/2       | 2-16k/   32k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  2.2s |  <  5s |
-| megaAVR 0           | 8-16k/32-48k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  3.3s |  <  8s |
-| AVR Dx-series       |      32-128k |       521b |     Words | 23k/s,    24k/s |    < 11.0s |  < 16s |
-| Dx-series w/HT42    |      32-128k |       512b |     Words | 32k/s,    24k/s |    <  9.4s |  < 15s |
-| AVR Ex-series*      | 8-16k/32-64k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  4.4s |  < 10s |
+| Part Series         |  Flash range |  Page size | Writes by | Max. Speed R, W | Full Write | 230400 | Max Read (921k) |
+|---------------------|--------------|------------|-----------|-----------------|------------|--------|-----------------|
+| tinyAVR 0/1/2       | 2-16k/   32k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  2.7s |  <  5s |            0.7s |
+| megaAVR 0           | 8-16k/32-48k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  4.0s |  < 10s |            1.0s |
+| AVR Dx-series       |      32-128k |       521b |     Words | 23k/s,    24k/s |    < 12.0s |  < 17s |            3.0s |
+| Dx-series w/HT42    |      32-128k |       512b |     Words | 32k/s,    24k/s |      ????  | ?????  | My HT43B345 is acting up currently |
+| AVR Ex-series*      | 8-16k/32-64k | 64b / 128b |     Pages |* 28k/s,10-16k/s | *  <  4.4s |* < 10s |  *              |
+`*` Speculative
+
+Note that word machines, despite supporting lower baud rates, actually program far faster, because they can be programmed 512b at a time (limit from the maximum of 255 repeats hence 256 writes of 1 word each). This reducction inthe number of separate operations is a massive boon because each opperation is a separate USB transfer, adding latency of between 0.5 and 2 ms depending on the adapter. 
+
+Note that ALL parts arec compatible with 921600 baud for reads
 
 Full write assumes using the fastest programming option to write the entire memory of the largest on the list with the FT232 except where noted. 230400 column is same, except at that baud rate.
 
-**Numbers for the EA-series are speculative!** It is assumed that it will behave mostly like tiny/mega. Page sizes for unreleased parts pulled from the headers (for the DD-series) and pycmnuprog repo (for the EA-series). Only product briefs are available for those series, and IO headers are only out for the AVE64DD parts. One interesting thing to note about theser is that while everyone has been talking like the DD is closer to release, the official pymcuprog repo tells a different stoery: It had no DD device spec at a time when it had not only 64k EA-series, but also it's smaller siblings. They have been releasing the largest oer second largest flash version, then filling in below that, then doing there largest on modern AVRs. That implies that the EA may be further along than we realize, and the DD may be hitting some unexpected snags. In any event, I'll be happy if they take long enough that when the product is released, they've actually fixed all the known bugs instead of just catalogued them, and tested it carefully enough that it will take me more than an hour after progeramming one trip over multiple silicon bugs (DA-series I tripped over 3 in that time).
+As noted above, for reasons I don't really understand, my HT42B345 isconnecting at 2400 or 4800 baud.....
+
+**Numbers for the EA-series are highly speculative!** It is assumed that it will behave more like tiny/mega. Page sizes for unreleased parts pulled from the headers (for the DD-series) and pycmnuprog repo (for the EA-series). Only product briefs are available for those series, and IO headers are only out for the AVE64DD parts. One interesting thing to note about these is that while everyone has been talking like the DD is closer to release, the official pymcuprog repo tells a different stoery: It had no DD device spec at a time when it had not only 64k EA-series, but also it's smaller siblings. They have been releasing the largest or second largest flash version, then filling in smaller parts and then finally ending with the largest parts if they didn't start with them. (Dx so far has been largest, smallest, middle, tinyAVR 2-series went 16, 4 & 8, then 32, and it's known that the DD will start with 64 (so likely same as other Dx. But either way, that repo is suggestive of the EA being very far along,   That implies that the EA may be further along than we realize, and the DD may be hitting some unexpected snags. In any event, I'll be happy if they take long enough that when the product is released, they've actually fixed all the known bugs instead of just catalogued them, and tested it carefully enough that it will take me more than an hour after progeramming one to trip over a silicon bug that wasn't yet documented.
 
 
-**Note** - those numbers were taken with SerialUPDI 1.1.0, versions of the core with later versions (megaTinyCore 2.4.0 and DxCore 1.4.0) may have different performance. megaTinyCore will enable a write delay except in TURBO mode on these parts to improve compatibility with different adapters, at the expense of significantly slower write operations. Not used in turbo mode, so turbo still works just as fast.  TURBO mode does not use this delay, and instead assumes the adaptyer's USB latency will do the trick (as the shortest delay that can be added by time.sleep() in python is several times longer than we need, added on top of the USB latency! For CH340G and FT232RL on Windows, it is. Thankfully, it appears we narrowly dodged a need for a more painful compatibility measure impacting all operations on everything.
-
+**Note** - those numbersin the last chart were taken with SerialUPDI 1.2.3, versions of the core with later versions (megaTinyCore after 2.5.7 and DxCore after 1.4.6) may have different performance. Each version has has a number of changes to performance The versions right after we made it fast ran the fastest, and the bugdixes since then have more often than not cost a touch of performance
 
 #### Observations on Speed
 The following is based on the numbers above, test data not included, as well as examination of oscilloscope trace. Note that the 460800 baud data for the Dx-series is not directly comparable as it uses blocksize to artificially slow the writes to prevent overrunning the buffer on the target (which is barely a buffer) which the chip empties at a constant rate.

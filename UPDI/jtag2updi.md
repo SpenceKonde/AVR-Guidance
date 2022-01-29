@@ -25,6 +25,7 @@ Almost any serial adapter can be used for pyupdi style programmer, as long as yo
 a. look up the pinout of the serial adapter chip online and measure resistance to that pin,
 b. check all the pins on the chip. Only one will have a value of a few k or less or
 c. just go for the ends of the resistors, expecting one to have a 1-2.2k to Tx on one side, and 0 on the other.
+3. The UPDI protocol uses parity and 2 stop bits (parity can be disabled by a control register flag, but you need to access UPDI in the default mode using parity to change this). Adapters that do not support parity or 2 stop bits, such as the MCP2200 and MCP2221, cannot be used.
 
 The TX resistor is ubiquitous on CH340-based adapters. On FT232 adapters, it is not usually present. I suspect this difference is due to the fact that the CH340 can output true 5v TTL serial, while most others are 5v tolerant, but only go to 3.3v on their own.
 3. Some serial adapters have a dedicated LED to indicate Rx. While some fancy chips have an I/O pin that drives the RX led (the FT232, for example), a cheap adapter with an RX LED may have just put an LED and resistor on the RX line (in fact that's what that above mentioned green boards with switch and micro USB port did).. The load from an LED on the UPDI line will overwhelm any signal from the target and prevent communication (a LED on TX is fine - the adapter has plenty of drive strength.)

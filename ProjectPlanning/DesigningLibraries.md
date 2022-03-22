@@ -10,7 +10,7 @@ If the library is for interfacing with external hardware,
 
 So you need to give most thought relating to overhead to the smallest flash parts that you want to be able to use your library, and to the parts with the most instances of the peripherals in question, and to the impact of moving from parts with 1 of a peripheral, to those with multiple. 
 
-[!Library design, graphicall](tragicquadrant.png)
+![Library design, graphical](tragicquadrant.png)
 
 
 In the above diagram, for each specfic API function (for the Ardino API example), one could place a dot at a very specific point. likewise, for direct register writess, depeding on the peripheral, it may be straightforward to configure them by hand, or truly nightmarish. 

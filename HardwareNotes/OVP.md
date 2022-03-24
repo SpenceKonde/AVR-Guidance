@@ -7,13 +7,14 @@ All IC's as a maximum voltage, and all I/O pins will general be damaged by volta
 2. Sneak path, trough other parts' protectom diodes.
 3. Perverse intermittent connections. Tis onepersonally cost me over a dozen fully assembled decvces and mearl $10 of ssorted accessories, on one occasion with 4 failures in a single night as I tried to keep te lighinging running for an event.
 
-Consider the situation I had. I had lighting controllers connected a chain of 4 srings of 50 WS2811B christmas light style LEDs. They took in 18-30v on onr pin from a lapop power supply. This psir of wires was run the entire length of each sring, I was frustrated withthe two connectrs and with the terrible performane and heat generation of te buck comverter, which would tend to be only around 70%. I replaced the two conectors with a single  5 pin one, swapped out the DC-DC comverter, amd te trobles begam. It always worked fine in the lab, but was ureliable in practice, with a failure leading to total ardware failure on the controller. ]
+Consider the situation I had. I had lighting controllers connected a chain of 4 strings of 50 WS2811B christmas light style LEDs. They took in 18-20v on onr pin from a lapop power supply. This pair of wires was run the entire length of each string, with a DC-DC converter at one end and JST-SM-2 connectors at both ends. I was frustrated withthe two connectrs and with the terrible performane and heat generation of te buck comverter, which would tend to be only around 70%. I replaced the two conectors with a single  5 pin one, swapped out the DC-DC comverter. What an improvement in current! I could lose the sofware brightness limiting! As I tried to deploy them, the trobles begam. It always worked fine in the lab, but was ureliable in practice, with a failure leading to total ardware failure on the controller. ]
 
 recall the connections: 
 +19v from power source
 +5v outpt to drive LEDs and controller
 Data
 Groumd (to leds and controller)
+Ground (from supply)
 
 So far my best theory was that the grond that fed the DC-DC module frther down the chain would would berefly becoe disconected because JST-SM is one of te worlds worst connector. With no ground, the output voltage would rise to ite input voltage, amd since ta buck converter can't pull it's output lower, they were helpless to stop the overvoltage from reaching the controller I was once holding one in my hand (my last one) and;.. it worked! and as I lowered my hand to place it on the shelf the LEDs stopped and the chip got hot. Well, there goes the last cotroller. 
 

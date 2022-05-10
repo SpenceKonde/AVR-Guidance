@@ -30,7 +30,7 @@ Sorted by approximate frequency of use
 * `mxxx` where the x's are numbers and sometimes letters. Refers to an `ATmega xxx. Often used by programming tools. 
 * `tnxxx` and `txxx`- as above, but for tinyAVR parts. The convention of tnxxx comes from the naming of the io header files that Microchip supplies, ex, the ATtiny3224 might be abbreviated t3224 in informal discussion or where space is at a premium. The header file that contains names for all the registers on that part is named iotn3224.h. 
 
-## AVR Jargon referemcd from other documents
+## AVR Jargon referenced from other documents
 * `SFR` - Specoal Function Register. These are defined by the toolchain headers, and are how the on-chip peripherals are referenced. The are given distinctivenames. On Classic AVRs, they always are spelled only with a small number of captial letters and numbers. On modern AVRs, where there might be more than one of a peripheral the peripheral, somtimes followed by as number, then a `.` then a name as describeb above. 
 ### Examples
 * (classic AVR) `ADCSRA` (**A**malog to **D**igital **Co**nverter control and **S**tatus **R**egister A.

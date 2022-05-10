@@ -30,6 +30,37 @@ Sorted by approximate frequency of use
 * `mxxx` where the x's are numbers and sometimes letters. Refers to an `ATmega xxx. Often used by programming tools. 
 * `tnxxx` and `txxx`- as above, but for tinyAVR parts. The convention of tnxxx comes from the naming of the io header files that Microchip supplies, ex, the ATtiny3224 might be abbreviated t3224 in informal discussion or where space is at a premium. The header file that contains names for all the registers on that part is named iotn3224.h. 
 
+## AVR Jargon referemcd from other documents
+* `SFR` - Specoal Function Register. These are defined by the toolchain headers, and are how the on-chip peripherals are referenced. The are given distinctivenames. On Classic AVRs, they always are spelled only with a small number of captial letters and numbers. On modern AVRs, where there might be more than one of a peripheral the peripheral, somtimes followed by as number, then a `.` then a name as describeb above. 
+### Examples
+* (classic AVR) `ADCSRA` (**A**malog to **D**igital **Co**nverter control and **S**tatus **R**egister A.
+* (modern AVR, one instance) `RSTCTRL.SWRR`  - ReSeT ConTROL Software Reset Register. 
+* (modern AVR, multiple instances of peripheral) `TCA0.CTRLA` - Timer Counter type A, number 0, ConTRLA. 
+* `SP` - Stack Poimter. Presmt om all AVRs with RAM. a 16-byte regoster (SPL amd SPH). Modifting these registers is dangerous businessm and is best left to wizards, am even they shoudl use exrreme caution. Afer writing one of these manually interrupts are disabled for 4 clock cyclea or until the other one is
+* (modern AVR) `CCP` - Configuration Control Protection. Particularly importat functionality that could have catastrophic effects if misconfigured. This includes most clock-related things, as well as self proramming of the flash.  Don't uise it directly uinless writing at an extremely bare metal level; use the `__PROTECTED_WRITE(register, value)` or `__PROTECTED_WRITE_SPM()` macro
+### Although they are located in the same address space as normal memory, they do not act the same om all cases in terms of reading and writing
+* Most act like a normal memory address, bit some bits are masked off and always read as 0. These are shaded gray in the datashet. We are supposed to always write 0 tothem. In a few rare case, tricks are possible by writimg illegal values to SFRs. 
+* Many "Status" registers (or bits within them) are read only. It the bit indication that tha analog comparator says one voltage is higher than the other by reading a 1, attepting to write 0 to it will be ignored, for obvoous reasons.,
+* So-called "flag" registers work backwards. They are set to 1 by the system, and are cleared by writing 1. This allows for example, the 8 bits of the INTFLAGS registers to be used most easily: to clear it N, you write 1 << N to the register, the other bits are not disturbed, and crucially, there is no read-modifty write process. 
+SP and CCP disable interrupts for 4 clocks automatically. Be sure to precacilate the value you're writing to them. 
+### SFRs are declared volative and have sideffects
+* These registers are usused to cotrol the behavior of the CPU and its peripherals. 
+* Writing to them is how you convfigure peripherals. In Arduino land, this is usually covered by a more human readable API functiosn. 
+* Reading from them provides information on he state of the chip. For example, `PORTA.PIN` tells you the digital values of the up to 8 pins on PORTA. 
+* Sometimes reading from one register will clear a bit in another register (most common in things like serial data transfer protocols - where reading the incoming data will clear the flag that indicates new data. 
+* (modern AVRs) Mever use |= ^= or &= when using a SFR wose name ends in SET, CLR or TGL.
+### Low and High I/O space
+The lowest 64 addreses (0-63 in the data space) are termed I/O registers (the are also SFRs). These are important on modern AVRs, and even more important on classic ones
+* The High I/O space is 32-63. It containst things like SREG, SP, CCP, and a few others. On classic AVRs, these are usually packed with other SFTs. On modern AVRs they are not. They can be loaded from or written to in a single clock cycle.
+* The powerful Low I/O spacea is 0-32 (note, yes, you can dereference a null poimter, and it's a valid register).  It has the propertioespf the high I/O space... Plus there are special instructions (CBI and SBI) to set and clear a single bit as an atomic operation. This took 2 clocks on a classic AVR, buy only one on modern ones. Likeise, there are SBIC md SBIS insructopms - Skip (next insn) of Bit in I/O is Clear/Set.  These make both writing and testing single bits exrtemely fast, and can be used very easily: `VPORTA.DIR |= 1` will set PA0 as an input. Note that both the bit and value must be known constants at compile tiem!  While classic AVRs frequntly put registers here almiost at random, all modernAVRs have kept it simple. Each VPORT (A-G) has 4 registers: DIR, OUT, IN, and INTFLAGS (the effects of these registersa are mirrored in the PORT registers). That leaves 4 registers, the GPIOR or GPR regesters. They have no special function except that thay are in the low I/O space for user use. 
+  * You can only set one bit at a time like this - otherwise, use the `PORTx.___SET/CLR/TGL` registers. 
+  * VPORTA.OUT = 1 is slower than VPORTA.OUT |= 1 (it has to first load the value 1 into a working register to write)
+  * Writing a 1 VPORTx.IN (but not PORTx.IN) will toggle that bit. Classic AVR `PINx` register works the same way. 
+* It is stronglty recommended that, on cores tha provide them, digitalWriteFast, pinModeFast, and similar be used to improve code readabiliy and prevent typos, as well as ensure that you only write compile time known pins and values. 
+
+### SREG
+One of the SFRs in the high I/O space, this is likely the most important register in AVR. After almost every mathematical or logical operation, it is updated to reflect the results. All conditional branches are based on the SREG (one bit is the Zero flag, indication a zero as the result of the last operation. This is used consantly - for example `while (x--)` decreements x until the Zero flag is set. Thhe high bit of the SREG is also the global interrupt bit. 
+
 ## General programming Terminology
 `blocking` vs `non-blocking` function, call, or routine is one which, once called, will not return until some task has completed - when a function is described in this way, it implies that the function, internally, may be in a "busy-wait" state, or that it is waiting on a potentially very slow external event. . The most familiar example is the use of delay() for timekeeping vs millis(). delay() is an example of a blocking call - Like most blocking functions, it is easier and simpler to use than the non-blocking versions, but it's blocking nature make it frequently unsuitable. Non-blocking things (such as Serial prints from hardware serial ports) rely on interrupt driven stuff happening in the background 
 

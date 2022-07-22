@@ -59,6 +59,9 @@ The internal oscillator speeds can be reached (on most but not all specimens) wi
 `*` - the 0.55V reference voltage must be used with a much lower ADC clock
 `**` - the internal voltage reference on the 2-series halves the maximum ADC clock speed, thoughwith an original maximum of 6 MHz, it remains twice as fast as the far less capable parts 0/1-series ADC
 
+### 1-Series Parts With 16k or 32k of Flash
+Unlike almost every other AVR ever, there are additional "bonus" features based on the flash-size of parts within this family: The 16k and 32k versions (only) have a few extra features: they all have 2k of ram, whether 16k or 32k. They have 3 analog comparators (including a window mode), a second - desperately needed - type B timer. But weirdest of all they have a second ADC exactly like the first, differing only in which pins the channels correspond to! Was this an answer to those who wanted a differential ADC? (trigger both from same event, subtract, and get a differential reading with the same limitations as the Dx-series's "differential" mode only with fewer bits). You can also have one in freerunning mode (maybe using the window comparator, or both freerunning, continually measuring different pins. With separate sample and hold capacitors, crosstalk is minimal, while it is very signficant using a single ADC to alternately measure two pins. 
+
 ## Pincount options
 Series      | 8 | 14 | 20 | 24 | 28 | 32 | 40 | 48 | 64 | 100 | Largest flash |
 ------------|---|----|----|----|----|----|----|----|----|-----|---------------|

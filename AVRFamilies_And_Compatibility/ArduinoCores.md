@@ -27,6 +27,8 @@ ATA (ATAutomotive)              | None            | Little info available, and w
 AT90_____ not AT90CAN           | None            | Older parts, each family with a confusing peripheral (either USB or a fancy timer similar to modern TCD called a PSC
 ATmega16/32/64M1,32/64C1        | None, sadly     | Never sure why nobody made a core for these. 
 
+`*` CANBUS is a very complicated automotive network. It might as well stand for "Confusing Automotive Network Bus" But it is ubiquitous in automotive use.
+
 ## Those ATmega16M1/32M1/64M1/32C1/64C1 parts
 This family is the only set of parts that I think "deserves" a core and doesn't have one. The xxM1's absolutely beat the stuffing out of almost every other classic AVR in a 32-pin package, with the exception of the 328P**B**, where experts could argue about the relative merits. Every other classic AVR who would hope to beat out the 64M1 or even 32M1 on any metric will meet humiliating defeat. What makes the lack of a core even more surprising is that most of what is needed is straightforward, not hard to do. I think it would just be a matter of leg-work to get them working. If anyone is interested in doing this, start from MiniCore, adjust variants, tweak wiring_analog to use the slightly fancier ADC - especially if you wanted to implement all the fancy features (it's got differential capability and all that good stuff, see ATTinycore v2.0.0-dev variants for how I suggest handling differential ADC). Some of these parts have CANBUS support as well (I think this can be stolen from the libraries that use CANBUS on the AT90CAN parts, with little or no modification. 
 ### If you were to change that... 

@@ -39,14 +39,20 @@ Separate from classic AVRs because they are not directly comparable, and because
 `††` - The 14-pin parts have 3 mappings for USART0, (1 with only TX/RX. aanother with no XDIR), and 2 for USART1 (the first has no TX pin, the latter only TX and RX). The 20-pin ones hve 5 for USART0 and 2 for USART1. 
 `‡` - The 16k versions still don't have the RTC fix, 3216/3217 do.
 `‡‡` - I refer to this as a pseudodifferential ADC. It's capabilities are as if two ADCs sampled simultaneously and the result was subtracted. You have a differential ADC, but gain is unity, and and Vref must exceed the voltages measured. Whereas the 2-series and EA have a "real" differential ADC, which can work with inputs a fraction of a volt beyond the power rails, regardless of VREF, and typically have a gain stage, allowing small voltage differences to be measured even right near the power rails (including things like the other side of a current sense resistor, which might be 0.1 or 0.2v above Vdd.  
-`‡‡‡` - 2 SPI ports each with up to three pinsets. **these are treated like one SPI peripheral by SPI.h** because all the libraries you'd want to use it with will get confused because SPI1 can't be the name of the second SPIclass instance because it's already used for the SPI_t struture (basically every library that supporteed more than one SPI port being on the chip barfed failed to compile when told there were two interfaces. 
-`???` - It is belived that overclocking performance of the 0-series is the same as the 1-series. 
+`‡‡‡` - 2 SPI ports each with up to three pinsets. **these are treated like one SPI peripheral by SPI.h** because all the libraries you'd want to use it with will get confused because SPI1 can't be the name of the second SPIclass instance because it's already used for the SPI_t struture (basically every library that supporteed more than one SPI port being on the chip barfed failed to compile when told there were two interfaces.
 
+
+## What The Overclocking Numbers Mean
+Overclocked speeds are typical maximum speeds that can be reached with basic functionality intact. Not all parts will reach or function at these speeds, and the operating temperature range is likely far narrower than it is at the rated speeds. I'm aware of nobody who has played with overclocking the 0-Series, but as it was released at the same time as the 1-Series and appears to be a 1-Series with fewer features, I would expect them to be the same - though if they turned out not to be, I could rationalize a difference in either direction equally easily (and even phrase it in a way that makes someone who assumed otherwise look silly: "they're budget parts, made with a less advanced process, of course they don't overclock as well!" or "without all those wacky features hanging off the bus, of course they overclock better!").
+
+The internal oscillator speeds can be reached (on most but not all specimens) with [tuning](megaavr/extras/Ref_Tuning.md). Note that while modern tinyAVRs can be tuned, tuning doesn't change the speed as much there, but the internal speed selection has two undocumented speeds, 28 and 32 MHz. Best results overclocking are (as on classic AVRs) obtained with an external oscillator. Never use an overclocked part in any critical application; neither stability nor correctness of arithmetic can be guaranteed! We still don't know whether the EA's tuning will be tiny-like or DD-like (initial indications are tiny-like) - though it could be something else entirely.
+
+## Voltage Reference Options
 | VREF sets   | Lowest * |  Low   |  Mid   | High | Highest | External | Used in part families       |
 |-------------|----------|--------|--------|------|---------|----------|-----------------------------|
-| Set A       | 0.55V    |   1.1V | 1.5V   | 2.5V |    4.3V | not all  | tinyAVR 0/1, atmega0 series |
-| Set B       | -        | 1.024V | 2.048V | 2.5V |  4.096V |     Yes  | tinyAVR 2                   |
-| Set B2 **   | -        | 1.024V | 2.048V | 2.5V |  4.096V |     Yes  | tinyAVR 2                   |
+| Set A       | 0.55V    |   1.1V | 1.5V   | 2.5V |    4.3V | not all  | tinyAVR 0/1, megaAVR 0      |
+| Set B       | -        | 1.024V | 2.048V | 2.5V |  4.096V |     Yes  | AVR Dx-series               |
+| Set B2 **   | -        | 1.024V | 2.048V | 2.5V |  4.096V |     Yes  | tinyAVR 2, AVR Ex           |
 | Classic 1   | -        |   1.1V | -      | -    |      -  |      No  | Many low end classic parts  |
 | Classic 2   | -        |   1.1V | -      | -    |  2.56V  |     Yes  | Many better classic parts   |
 

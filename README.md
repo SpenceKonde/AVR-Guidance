@@ -1,3 +1,6 @@
+***THE DOCUMENTS IN THIS DIRECTORY ARE ALL TO BE CONSIDERED DRAFTS***
+**I ASSUME ZERO RESPONSIBILITY FOR ISSUES RESULTING FROM FOLLOWING THIS ADVICE**
+
 # Best Practices, Notes and Guidance
 For programming AVRs with Arduino IDE(with some remarks on other IDEs)
 

@@ -8,7 +8,7 @@ AVR DA/DBs-series               | [DxCore](https://github.com/SpenceKonde/DxCore
 AVR DD-series                   | [DxCore](https://github.com/SpenceKonde/DxCore)| AVRxxDDyy - pincounts of 14, 20, 28 and 32 available
 AVR EA-series                   | DxCore planned  | AVRxxEAyy - Unreleased.
 Classic tinyAVR w/>= 2k flash   | [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) | Excludes: t20, t40, t28L
-Classic ATtiny13                | [MicroCore](https://github.com/MCUdude/MicroCore) | 
+Classic ATtiny13                | [MicroCore](https://github.com/MCUdude/MicroCore) |  
 Classic ATtiny15                | None            | Obsolete and out of production
 Classic ATtiny20/40             | None            | Crapola parts
 Classic ATtiny28L               | None            | Functionally obsolete. And it has no SRAM! 
@@ -25,7 +25,7 @@ ATmega###RFR/RFR1/etc           | None            | Integrated radio communictio
 ATmega16HV/32HVA/HVB/HVrev2     | None            | For controlling LiPo charging up to 4S. Scant documentation. Just buy a balancing charger board. 
 ATA (ATAutomotive)              | None            | Little info available, and what is avaiable implies that they are not a good fit for hobbyists. 
 AT90_____ not AT90CAN           | None            | Older parts, each family with a confusing peripheral (either USB or a fancy timer similar to modern TCD called a PSC
-ATmega16/32/64M1,32/64C1        | None, sadly     | Never sure why nobody made a core for these. 
+ATmega16M1/32M1/64M1,32/64C1    | None, sadly     | Never sure why nobody made a core for these. 
 
 `*` CANBUS is a very complicated automotive network. It might as well stand for "Confusing Automotive Network Bus" But it is ubiquitous in automotive use.
 

@@ -45,7 +45,7 @@ Floats are bad. Floats are bloated and slow. You don't want to be using floats i
 * Let that part about the data dependance sink in for a minute. The effect is small for adding and subtracting floats, slightly larger for multiplying them, and largest for division. Integer types have dependence on data too for division, but it usually doesn't matter. 64-bit integers have explosive dependance on data. It is not evenly distributed (of the 2^64 possible 64-bit integers, half can be divided very quickly, because the answer is truncated to zero, and it doesn't take very long to notice that, compared to actual division; as soon as the denominator is smaller than the numerator, the speed of division starts falling. A random 64-bit integer divided by a random 16-bit one (which is promoted per c rules) averages around 6 times slower!
 * If the floating point value is getting sent to some external device, it's almost certainly not being sent down the wire as a float - the library author decided it should be expressed as floating point (likely because that makes sense considering what the value is, and may not have been aware of the magnitude of the consequences, or they were not serious for his envisioned use case - maybe he had it connected to an ATmega328p or ATmega4809, and you're hoping to use it with an ATtiny with only 4k of flash). Find the point where they convert the float to a format that gets sent down the wire, and replicate that functionality without the intermediary float.
 
-## He who divides will be conquored
+## He who divides will be conquered
 Use Ersatz Division, particularly on 32-bit values. 
 
 Appendix 2: Bitshift division

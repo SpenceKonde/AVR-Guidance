@@ -69,3 +69,4 @@ These can serve as a bit of a sanity check when you're designing algorithms for 
 | int64 |   3.38 | 20.06  | 108.40 |   2.70 |  16.05 |  86.72 |   2.25 |  13.38 |  72.27 |   1.69 |  10.03 |   54.2 |   1.13 |   6.69 |  36.13 |
 
 The column headings are "A/S" (Add/subtract) Mul (multiply), amd div (divsision - modulo is similar because it requires division to be performed), followed by and @ and the clock speed in MHz. assuming an AVRxt processor. AVRe+ (pre-2016 revolution) is slightly slower because push is slower. Times are in uS
+Speed goes up to 48 MHz because that's how how fast you can overclock a Dx-series part if you use E-spec parts and an external *clock*. I don't know that a crystal would do it, but they should definitely do 40. 

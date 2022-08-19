@@ -43,4 +43,18 @@ return ms;
 ## You don't want to float
 Floats are bad. Floats are bloated and slow. You don't want to be using floats if you can avoid it. They are not quite as slow to divide as a long, but they aren't much better. And unlike other data types, all opperations on floats are slow *and depend on the data* While dividing two longs is typically 1/3rd slower than floats, two long's can be added in about 1/6th the time as two floats, aand multiplication is can be done in half the time with a long than a float (on average).
 * Let that part about the data dependance sink in for a minute. The effect is small for adding and subtracting floats, slightly larger for multiplying them, and largest for division. Integer types have dependence on data too for division, but it usually doesn't matter. 64-bit integers have explosive dependance on data. It is not evenly distributed (of the 2^64 possible 64-bit integers, half can be divided very quickly, because the answer is truncated to zero, and it doesn't take very long to notice that, compared to actual division; as soon as the denominator is smaller than the numerator, the speed of division starts falling. A random 64-bit integer divided by a random 16-bit one (which is promoted per c rules) averages around 6 times slower!
-* If the floating point value is getting sent to some external device, it's almost certainly not being sent down the wire as a float - the library author decided it should be expressed as floating point (likely because that makes sense considering what the value is, and may not have been aware of the magnitude of the consequences, or they were not serious for his envisioned use case - maybe he had it connected to an ATmega328p or ATmega4809, and you're hoping to use it with an ATtiny with only 4k of flash). Find the point where they convert the float to a format that gets sent down the wire, and replicate that functionality without the intermediary float/
+* If the floating point value is getting sent to some external device, it's almost certainly not being sent down the wire as a float - the library author decided it should be expressed as floating point (likely because that makes sense considering what the value is, and may not have been aware of the magnitude of the consequences, or they were not serious for his envisioned use case - maybe he had it connected to an ATmega328p or ATmega4809, and you're hoping to use it with an ATtiny with only 4k of flash). Find the point where they convert the float to a format that gets sent down the wire, and replicate that functionality without the intermediary float.
+
+## He who divides will be conquored
+Use Ersatz Division, particularly on 32-bit values. 
+
+Appendix 2: Bitshift division
+Particularly for 32 bit values, you really do not want to do division when you are doing time critical stuff. If the divisor is constant, you don't have to.
+1. Work with unsigned values. 
+1. Rightshift until the number is less than the target number. 
+2. rightshift until the magnitude of that value minus the previous one will bring the sum a close to the target as possible. Subtract it from original number.
+3. Rightshift that intermediary number until the magnitude of that value **plus** the previous one will bring the sum a close to the target as possible. Add them.
+4. Repeat 2 and 3 as needed to get required accuracy. 
+5. Alternate addition and subtraction to prevent skips and jumps in the values. 
+6. All shift values must be constant]
+7. Implementing in assembly will dramatically improve performance but use more flash by eliminating the loops that the compiler uses amd allowing you to drop terms once you know you've shifted all the 1's out of them. 

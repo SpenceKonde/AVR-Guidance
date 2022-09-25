@@ -44,20 +44,23 @@ Despite the strange measurement on the width of the pins, these are comparable t
 
 These are the most common ones available. Unfortunately, they are utter garbage. They should never be relied upon to mate with other class 2 or 3 stacking pin header. This is particularly disappointing, as they are available in the widest variety of sizes, too.
 
+## What, exactly is wrong with the crap header? 
+As far as I can tell there are two issues. The pin is thinner, so when two stackable headers are stacked they can miss eachother. The second can be felt as you insert the header (either end) - the edge is rough, which contributes to wear and poor reliability. 
 
 ## Identifying good ones in listings
 It is virtually impossible to tell the difference between good and bad single row header until you open the package shout profanity and throw them into the garbage can. Actually if you're selling products that include stacking header, make it a public trashcan a ways away, you don't want anyone to know that you had any of the bad ones or they will assume you used them in your products, and if they have any sense, will think you're selling products with trash header and avoid you like the plague. That is my recommended practice if you locate vendors selling products made with crap stacking pin header.
 
-
 ### Double Row header
-Double row header is far easier to spot The Good Ones: good double-row stacking pin header has a block of plastic that looks like the plastic around the pins in ordinary dual row pin header between the base of the female receptacle and male pins. I have not captured any double row stacking pin header better than Class 3 that does not have this.
+Double row header, as well as Class 1.5 (PC104) is far easier good specimes of: good double-row stacking pin header has a block of plastic that looks like the plastic around the pins in ordinary dual row pin header between the base of the female receptacle and male pins. I have not captured any double row stacking pin header better than Class 3 that does not have this.
 
 2x20 is by far the most common size - Why? because it's what the Raspberry Pi uses for it's GPIO header!
 
+### Colored stacking pin header is always the worst of the worst
+Unless you make it yourself, for whatever reason, no manufacturers make quality colored stacking pin header. 
 
 ## Making custom header pieces
 This doesn't scale well unless you have a flunkie who will do piece work for you., but if you want a small quantity of, say, colored stacking pin header, you can do it.
-First you need some good pins. Start with a 1x40 strip of the PC104 type. Separate the plastic parts, maybe asn eighth of an inch of daylight between them, amd then go down the whole 40 connector with pliers, yanking each pin up an 8th of ann inch (at which point the wide part inside hits the other plastic thing and won't come further - but now it's disloged from the larger piece) When done, the other part will fall off. Now, remove the pins from the plastic spacer (whcih is probably all mangled and ugly by now, throw it out)
+First you need some good pins. Start with a 1x40 strip of the PC104 type. Separate the plastic parts, maybe an eighth of an inch of daylight between them, amd then go down the whole 40-pin connector with pliers, yanking each pin up an 8th of an inch (at which point the wide part inside hits the other plastic thing and won't come further - but now it's disloged from the larger piece) When done, the other part will fall off. Now, remove the pins from the plastic spacer (whcih is probably all mangled and ugly by now, throw it out). Now you have a pile of long, good pins. 
 You will also need a housing to put them into: start with some normal female header of the correct parameters. Yank the pins out one at a time with pliers. Replace them with the new pins which you will find fit in perfectly.
 Finally, you need that plastic spacer that goes on the bottom. For that - you guessed it - male header and more work with the pliers.
 Like I said, this doesn't scale well, but it goes quick enough that it's not prohibitive for small quantities, and if your minion is efficient, $15-20/hr will not break the bank.

@@ -283,10 +283,12 @@ If - like any engineer-type - your first thought is "Huh, those guys made such a
 
 One thing that's interesting to note is the distribution/usage of opcodes (or rather, which instructions eat up huge chunks of the 16-bit number for each instruction)
 * 3/8ths of the instruction-space is taken up with `xxxx-immediate` instructions! (ever wonder why only work on the top 16 registers? Now you know - not enough bits in a 16-bit instruction to let these take up any more of the instruction-space than they already do
-* 1/8th is load/set with displacement (well, if you were ever wondering why they don't have an X-register version of those, there's your answer! 
+* 1/8th load/store with displacement (well, if you were ever wondering why they don't have an X-register version of those, there's your answer! 
 * rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th. 
-* 3/16ths or so math and logical/arithmatic operations.
+* At this point we are up to 11/16ths. 
+* 3/16ths or so math and logical/arithmatic operations. bringing us to 14/16ths full
 * 1/32nd conditional branch, 1/64th skip-if
+* That means 59/64ths of possible opcodes are used, and we haven't even done any instructions other than the conditional branches, skipifs, logical/arithmatic, load/store with displacement (but not load/store without displacement, and a variety of other instructions aren't 
 
 ### Slack space calculations
 So how much slack is left in the instruction set? Very, VERY little!

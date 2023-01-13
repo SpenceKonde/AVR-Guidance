@@ -2,13 +2,30 @@
 SerialUPDI is a UPDI upload tool which uses a normal USB serial adapter with the most trivial of modifications directly as a UPDI programmer
 It was written in 2020-2021 By Spence Konde and Quentin Bolsee based on the pymcuprog tool from Microchip, which is much, much, slower.
 
-## jtag2updi? Never heard of him
+## Wiring the hardware
+SerialUPDI uses a standard USB to Serial Adapter with the addition of a couple of simple components. Here is a circuit that will work in most cases:
+````text
+--------------------                                   To Target device
+                DTR|    470Ω    BAT43                 __________________
+                Rx |---------------------,-----------| UPDI
+USB to Serial   Tx |----/\/\-----|<|----'       ,----| Gnd
+    Adapter     Vcc|---------------------------/-----| Vcc
+                CTS|                          /      |__________________
+                Gnd|-------------------------'
+--------------------
+````
+The components are:
+* A 470Ω resistor.
+* A Schottky diode such as one of the BAT series (BAT43, BAT54).
+
+That's it! For more detailed information see the following sections.
+
+## Advanced Information
+
+### jtag2updi? Never heard of him
 This page was formerly dedicated to discussing jtag2updi. jtag2updi was a program written in some of the most inscrutable C++ it has been my misfortune to work with, and it could be loaded onto a wide variety of AVR microcontrollers, and they could then be used as a UPDI programmer. The code was buggy, and very few people could make sense out of it. It's performance was passable, though, for example, Optiboot performed better at uploads, and both Optiboot and jtag2updi were stuck with baud rates 1/4th to 1/3rd of what the chip could be written at.. In late 2020, the first versions of SerialUPDI were created from pymcuprog, but the performance was very disappointing. In mid 2021, a push was undertaken to make it perform better than jtag2updi. The progress and the short time it took to make it exceeded all expectations. Since the 2021 performance sprint, SerialUPDI - which had write speeds as poor as 600b/s rapidly began consistently reaching speeds that
 
 SerialUPDI is not perfect, but it's imperfections are small compared to those of jtag2updi, and less-initiated individuals are better able to improve it as compared jtag2updi - particularly as most of SerialUPDI's foibles are almost entirely due simply to it having not gotten enough attention from people who know how to write python - so things that should retry on failure or print error messages instead print stack traces, because something's throwing an exception and I don't know how to catch it. But the low level core that writes to the chip is largely fine. As of 11/21, we are no longer offering support for jtag2updi. The cores still support it, but it is not recommended. I will fix no bugs. If someone else wants to leap into this dumpster fire, by all means go ahead. I choose not to.. The only way that thing could be salvaged involves essentially rewriting it de novo so it wasn't a posterchild for how incomprehensible C++ can get.
-
-## Wiring the hardware
-Briefly, you connect Rx and Tx with either a 4.7k resistor or a small (signal) Schottky diode (band towards Tx). The RX like becomes the UPDI line. The diode is more tolerant of extra series resistance on the line, and doesn't require you to measure the value of the internal resister on the serial adapter, if there is one
 
 ### Required Hardware
 There has been some debate and questions have been raised over whether the recommendations below are the best. More study is required.
@@ -167,7 +184,7 @@ the voltage is not going all the way down to ground when one side tries to asser
 
 They are not recommended unless there is something keeping you from using a diode configuration.
 
-However, if your choice is between a resistor and a silicon diode, as opposed to as Schottky one, always pick the Schottky, because the silicon diode will not work.
+However, if your choice is between a resistor and a silicon diode, as opposed to as Schottky one, always pick the resistor, because the silicon diode will not work.
 
 
 The PyUPDI classic:

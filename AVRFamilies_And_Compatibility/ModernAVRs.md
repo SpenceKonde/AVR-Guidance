@@ -1,6 +1,9 @@
 # A comparison of modern AVRs 
 Separate from classic AVRs because they are not directly comparable, and because they blow the doors off any classic AVR that challenges them.
 
+## Argh, I broke the table. I don';t know what I broke though, nor how to find it so I can correct it
+Sorry :-(
+
 | Series                  |     0-Series   |     1-Series    | 1-Series "plus"  |      2-Series       |     AVR__DA/DB   |   AVR__DD20/14 |  AVR__DD28/32  |    AVR__EA             | AVR__EB     |       megaAVR 0   |
 |-----------|-------------|----------------|----------------|-----------------|------------------|---------------------|------------------|----------------|------------------------|-------------|-------------------|
 | Availability            | Many backorder |  Many Backorder | Many Backordered |    Many Backordered | Many backordered | Many Backorder | Many Backorder |          Unreleased  | Unreleased  |  Some backordered |

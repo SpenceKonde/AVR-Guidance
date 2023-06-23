@@ -310,11 +310,11 @@ Because of the smaller page sizes and the more time-consuming rigmarole surround
 |    BAUD    |     FT232RL    kb/s |     CP2102* kb/s   |     -   CH340    kb/s  |    HT42B534    kb/s       |
 |------------|---------------------|--------------------|------------------------|---------------------------|
 | 115200     | 4.6, 6.2 W /  8.8 R | 4.3,6.2 W / 8.8 R  | 3.6, 5.2 W /  8.5 R    | 3.6,7.2 W / 9.1 R         |
-| 230400     | 7.5,10.0 W / 16.5 R | 7.1,9.6 W / 16.4 R | 4.9, 7.8 W / 15.6 R    |    Errors out             |
+| 230400     | 7.5,10.0 W / 16.5 R | 7.1,9.6 W / 16.4 R | 4.9, 7.8 W / 15.6 R    |    UNSUPPORTED            |
 | 345600*    | 9.1,13.6 W / 23.4 R |8.5,13.2 W / 23.1 R | 5.6, 9.5 W / 22.0 R    |    UNSUPPORTED            |
-| 460800     |10.4,15.6 W / 28.2 R |        Not tested  | 6.0,10.4 w / 26.8 R    |    Errors out             |
+| 460800     |10.4,15.6 W / 28.2 R |        Not tested  | 6.0,10.4 w / 26.8 R    |    UNSUPPORTED            |
 
-* The CP2102 does not, by default, support any speeds between 256kbaud and 460800 baud - but a free configuration utility from Silicon Labs enables customization of the baud rates in each range of requested speeds (though unfortunately, you can't define those ranges). I reconfigured mine for 345600 baud for development of with the Dx-series parts, which don't work at 460800, and did not bother to set it back to factory settings just to fill in the table; I would expect to see approximately 10kb/s and 15kb/s write speeds and around 26kb/s read speed. T
+* The CP2102 does not, by default, support any speeds between 256kbaud and 460800 baud - but a free configuration utility from Silicon Labs enables customization of the baud rates in each range of requested speeds (though unfortunately, you can't define those ranges). I reconfigured mine for 345600 baud for development of with the Dx-series parts, which don't work at 460800, and did not bother to set it back to factory settings just to fill in the table; I would expect to see approximately 10kb/s and 15kb/s write speeds and around 26kb/s read speed.
 
 (the above two charts were taken with 1.1.0.)
 
@@ -322,14 +322,20 @@ In this case, S<sub>prog(64)</sub> = 2/3 S<sub>prog(128)</sub>, so t<sub>prog(16
 
 No modern AVRs exist with page sizes of less than 64 bytes. Only 64b, 128b, and 512b exist. While many expected a page size of 256b for the DD-series - the most recent ATpacks show 512 (then again, they have other stuff copy-pasted from the DA/DB too still).
 
-| Part Series         |  Flash range |  Page size | Writes by | Max. Speed R, W | Full Write | 230400 | Max Read (921k) |
+| Part Series         |  Flash range |  Page size | Writes by | Max. Speed R, W | Full Write`$` | 230400 | Max Read (921k) `#` |
 |---------------------|--------------|------------|-----------|-----------------|------------|--------|-----------------|
 | tinyAVR 0/1/2       | 2-16k/   32k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  2.7s |  <  5s |            0.7s |
 | megaAVR 0           | 8-16k/32-48k | 64b / 128b |     Pages | 28k/s, 10-16k/s |    <  4.0s |  < 10s |            1.0s |
 | AVR Dx-series       |      32-128k |       521b |     Words | 23k/s,    24k/s |    < 12.0s |  < 17s |            3.0s |
 | Dx-series w/HT42    |      32-128k |       512b |     Words | 32k/s,    24k/s |      ????  | ?????  | My HT43B345 is acting up currently |
-| AVR Ex-series*      | 8-16k/32-64k | 64b / 128b |     Pages |* 28k/s,10-16k/s | *  <  4.4s |* < 10s |  *              |
-`*` Speculative
+| AVR Ex-series*      | 8-16k/32-64k | 64b / 128b |     Pages |* ??k/s,10-16k/s | *  < 12.0s |* < 17s | Potentially fast AF |
+| AVR Ex w/Optiboot   | 8-16k/32-64k | 64b / 128b |     Pages |* ??k/s,10-16k/s | *  >= 5.2s |* > 5.2 | Potentially fast AF |
+
+
+`$` at maximum baud rate
+`#` These numbers are much less that is achieved during a verify process, but this may not be the case for the Ex particularly with optiboot.
+`*` Speculative, updated based on more recent information. The errata throws a monkey wrench into the calculations because we don't control the software on the target during UPDI, but we can't write the page buffer while it's erasing or writing, so we have to program each page, wait for write, erase the next page, wait for erase, then send the programming command and data, repeat. Reads, however, can be made much, much faster - I fully expect the eventual optiboot version to be able to take 460800, 921600 baud, and hence, we really could see read speeds like that. So at least we can make verify mad fast.
+
 
 Note that word machines, despite supporting lower baud rates, actually program far faster, because they can be programmed 512b at a time (limit from the maximum of 255 repeats hence 256 writes of 1 word each). This reduction in the number of separate operations is a massive boon because each operation is a separate USB transfer, adding latency of between 0.5 and 2 ms depending on the adapter.
 
@@ -337,12 +343,9 @@ Note that ALL parts are compatible with 921600 baud for reads
 
 Full write assumes using the fastest programming option to write the entire memory of the largest on the list with the FT232 except where noted. 230400 column is same, except at that baud rate.
 
-As noted above, for reasons I don't really understand, my HT42B345 is connecting at 2400 or 4800 baud.....
+As noted above, for reasons I don't really understand, my HT42B345 is connecting at 2400 or 4800 baud..... What a boondoggle 2 revs of the PCB and I bought 100 of the damned things. I'm now pissed at Holtek for a crappy product, so per my usual policy, until proven otherwise, I will hold a grudge for years will now assume that Holtec's engineers are incompetent and sloppy, and their products of unacceptably poor design and unfit for their marketed purpose. This serial adapter certainly was, and that's being kind - I would consider an HT42B534 adapter used anywhere in a product to be instantly disqualifying for all applications, and would need to test any Holtec part before designing with or recommending it.
 
-**Numbers for the EA-series are highly speculative!** It is assumed that it will behave more like tiny/mega. Page sizes for unreleased parts pulled from the headers (for the DD-series) and pymcuprog repo (for the EA-series). Only product briefs are available for those series, and IO headers are only out for the AVE64DD parts. One interesting thing to note about these is that while everyone has been talking like the DD is closer to release, the official pymcuprog repo tells a different story: It had no DD device spec at a time when it had not only 64k EA-series, but also it's smaller siblings. They have been releasing the largest or second largest flash version, then filling in smaller parts and then finally ending with the largest parts if they didn't start with them. (Dx so far has been largest, smallest, middle, tinyAVR 2-series went 16, 4 & 8, then 32, and it's known that the DD will start with 64 (so likely same as other Dx. But either way, that repo is suggestive of the EA being very far along,   That implies that the EA may be further along than we realize, and the DD may be hitting some unexpected snags. In any event, I'll be happy if they take long enough that when the product is released, they've actually fixed all the known bugs instead of just catalogued them, and tested it carefully enough that it will take me more than an hour after programming one to trip over a silicon bug that wasn't yet documented.
-
-
-**Note** - those numbers in the last chart were taken with SerialUPDI 1.2.3, versions of the core with later versions (megaTinyCore after 2.5.7 and DxCore after 1.4.6) may have different performance. Each version has a number of changes to performance The versions right after we made it fast ran the fastest, and the bugfixes since then have more often than not cost a touch of performance
+**Note** - those numbers in the last chart were taken with SerialUPDI 1.2.3, versions of the core with later versions (megaTinyCore after 2.5.7 and DxCore after 1.4.6) may have different performance. Each version has a number of changes to performance. The versions right after we made it fast ran the fastest, and the bugfixes since then have more often than not cost a touch of performance in order to make the programmer work more reliably.
 
 #### Observations on Speed
 The following is based on the numbers above, test data not included, as well as examination of oscilloscope trace. Note that the 460800 baud data for the Dx-series is not directly comparable as it uses write chunking to artificially slow the writes to prevent overrunning the buffer on the target (which is barely a buffer) which the chip empties at a constant rate.
@@ -372,7 +375,7 @@ At high baud rates, `T` tends toward a function of size, NVM version, and serial
 
 T<sub>read</sub> is the same on all parts; an unimplemented change could push it a bit lower by bringing N all the way down to 1 from 2. The practical impact, however, is very small; after the end of the performance enhancement push, T<sub>read</sub>, reading in 512b blocks is dominated by the second term.
 
-For the Dx-series parts as shown in the above table, with the full suite of optimization, T<sub>read</sub> = T<sub>write</sub> (the same change is likely possible here; the improvement is maybe 10%)
+For the Dx-series parts as shown in the above table, with the full suite of optimization, T<sub>read</sub> = T<sub>write</sub>. There is a simple way to improve this verification speed - the baud rate can be increased as fast as the hardware will keep up with since there's no 70us delay.
 
 For tinyAVR, T<sub>read</sub> is the same as Dx, but T<sub>write</sub> is far worse - not only is page size smaller but `n` 4 instead of 2 so `C` is twice as high. At 460800 baud, the second term is about a third the magnitude of the first for write (and the tinies will accept writes at 921.6 kbaud). The important thing to keep in mind is that these chips still program in seconds - and the page write is being committed during the time that one of these pauses is ongoing.
 
@@ -394,7 +397,7 @@ There are 4 "erasure modes" imaginable (by me at least, and assuming the user de
 No matter how this is done though, the verify process needs to be significantly adapted so it doesn't care about the rest of the flash.
 
 ### Brain teaser inspired by above
-Writing over flash twice will result in bitwise and of the two. What's interesting about this is that you can even look at the start and it doesn't immediately look scary, particularly if neither was compiled with -mrelax, though close examination of the vectors will reveal that all is not well.  You know that on a part with >8k flash without -mrelex every other word in the vector table is supposed to be `0x940C` (`0C94` in the order it's stored in flash - AVR is little endian), worth -mrelax it will almost always be alternating `0xC___` (`__C_` in the hex file) and `0x0000` and on smaller flash parts, they use 1-word vectors and so there's no scattering of NOOPs, just a bunch of  `0xC___` in a row at the start before program starts. You can see how AND would leave most of that intact. But you could still see that the rest od the values were different. What would be the give-away within the vector table?
+Writing over flash twice will result in bitwise and of the two. What's interesting about this is that you can even look at the start and it doesn't immediately look scary, particularly if neither was compiled with -mrelax, though close examination of the vectors will reveal that all is not well.  You know that on a part with >8k flash without -mrelex every other word in the vector table is supposed to be `0x940C` (`0C94` in the order it's stored in flash - AVR is little endian), wiorth -mrelax it will almost always be alternating `0xC___` (`__C_` in the hex file) and `0x0000` and on smaller flash parts, they use 1-word vectors and so there's no scattering of NOOPs, just a bunch of  `0xC___` in a row at the start before program starts. You can see how AND would leave most of that intact. But you could still see that the rest od the values were different. What would be the give-away within the vector table?
 
 It turns out there's a lot of order there, and the result will be basically guaranteed to be obviously invalid. Other bitwise operators are also obvious. The rest of the file has far more entropy, and it won't be as obvious
 
@@ -403,3 +406,86 @@ Suppose someone has 2 hex files. Assume they both fill the flash. This individua
 The hex file doesn't work. You suspect he gave you the mangled file instead of a real one (he was clever enough to not alter the vector table, if he modified it at all). What would you look for to prove that he gave you a sham file? This individual is no fool (that's why he has two hex files both of which would be valuble to you) - so he didn't use -mrelax, and the vector table isn't obvious garbage, and he used a tool that recalculated the line checksums so the file wouldn'tbe rejected for that reason. Both hex files are for parts withmore than 8k of flash, but they may be for classic ATmega parts, modern tinyAVRs or AVnnDxpp types, but not xmegas./
 
 What positive tests are there? What negative ones?
+
+
+
+##### Answers:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1) vectors that land within the vector table. Vectors tend to come early in the flash, so this is quite plausivle
+
+2) If limited to a single operation, the only one with hope of not being immediately visually obvious (with the normal 2:1 ratio of digits replaced with an 8:1 or 1:2 ratio as would be the case with and and or respectively) is exclusive-or (if scrabling just one file, not would be similarly challenging to detect)
+
+3) Harder.
+
+First determine with certainty what architecture he was targeting.
+1) If he was stupid enough to include CRC at end of file, which of course will fail CRC, that it fails is proof that he gave you a bunk file. If the last 2 bytes of the flash contain a CRC, that means it's a modern AVR. He's too smart for that though, and he doesn't know if you'll turn on CRC.
+2) Look for `out` instructions, and what registers they write to. There is a big difference here between classic and modern AVRs
+
+| Address | Classic AVR | Modern AVR   |
+|---------|-------------|--------------|
+|    0x00 |     Any SFR | VPORTA.DIR   |
+|    0x01 |     Any SFR | VPORTA.OUT   |
+|    0x02 |     Any SFR | VPORTA.IN    |
+|    0x03 |     Any SFR | VPORTA.FLAGS |
+|    0x04 |     Any SFR | VPORTB.DIR   |
+|    0x05 |     Any SFR | VPORTB.OUT   |
+|    0x06 |     Any SFR | VPORTB.IN    |
+|    0x07 |     Any SFR | VPORTB.FLAGS |
+|    0x08 |     Any SFR | VPORTC.DIR   |
+|    0x09 |     Any SFR | VPORTC.OUT   |
+|    0x0A |     Any SFR | VPORTC.IN    |
+|    0x0B |     Any SFR | VPORTC.FLAGS |
+|    0x0C |     Any SFR | VPORTD.DIR   |
+|    0x0D |     Any SFR | VPORTD.OUT   |
+|    0x0E |     Any SFR | VPORTD.IN    |
+|    0x0F |     Any SFR | VPORTD.FLAGS |
+|    0x10 |     Any SFR | VPORTE.DIR   |
+|    0x11 |     Any SFR | VPORTE.OUT   |
+|    0x12 |     Any SFR | VPORTE.IN    |
+|    0x13 |     Any SFR | VPORTE.FLAGS |
+|    0x14 |     Any SFR | VPORTF.DIR   |
+|    0x15 |     Any SFR | VPORTF.OUT   |
+|    0x16 |     Any SFR | VPORTF.IN    |
+|    0x17 |     Any SFR | VPORTF.FLAGS |
+|    0x18 |     Any SFR | VPORTG.DIR   |
+|    0x19 |     Any SFR | VPORTG.OUT   |
+|    0x1A |     Any SFR | VPORTG.IN    |
+|    0x1B |     Any SFR | VPORTG.FLAGS |
+|    0x1C |     Any SFR | GPR.GPR0     |
+|    0x1D |     Any SFR | GPR.GPR1     |
+|    0x1E |     Any SFR | GPR.GPR2     |
+|    0x1F |     Any SFR | GPR.GPR3     |
+|  OTHERS |     Any SFR | Not used     |
+|    0x34 |     Any SFR | CCP          |
+|    0x3B |     Any SFR | RAMPZ        |
+|    0x3D |     Any SFR | SPL          |
+|    0x3E |     Any SFR | SPH          |
+|    0x3F |        SREG | SREG         |
+
+Thus:
+ * Any in or out instructions targeting the high I/O space other than those 5 addresses those, if you are supposedly holding code for the modern AVRs, means you got the bunk code.
+ * In r_, 3F; push r_; cli; (code) pop r_ out 3F, r_ is a common ideom. Any sign of it? If not, that's highly suspicous on both modern and classic AVRs.
+
+He may not have mangled the vector table - but what about the ISRs? You should find many ISRs not used (pointing to BADISR, the same address. Count the ones that are not (not counting 0x0000). Search the hex for `reti` instructions. If there are fewer reti's than used vectors, he is either truly gifted and is using tricks like these cores do - or the file is bunk. If interrupt vectors are seen, yet no reti's were found at all, the file can only be bunk.
+Attempt to locate an ISR. Make sure it is a valid ISR - Does it clear the intflags? (assuming it needs to?) does it start with one or more push instructions? And end with matching pops followed by a reti. If you can find an ISR that couldn't possibly work, you know that either the file doesn't work, or "Or the sketch contains critical bugs, attempting to make your code work would take longer that reimplementing it de-novo if this is the real one. Unless you gave me the bogus one, your code is unfit and I am no longer interested in it" - that's enough for most engineer's egos to give in and admit they'd given you the modified file.d
+
+One of the most obvious approaches however (though one that even a marginally clever adversary would have forseen and worked around) *somehow* is to search for invalid opcodes, and note their density. Invalid opcodes make up only a few percent of the instruction space. This should be 0 in an actual sketch outside of data sections. Any place that is in fact valid code should have zero word values that dont correspond to a valid opcode, save for the second half of a two word isn. We would expect things that were not valid instructions at the start and end of the code proper only, for progmem and variables copied to memory respectively. If you see the average density throughout, that implies that the code is effetively random, and is not a funtioning program.

@@ -23,35 +23,36 @@ Numbers were generated on a tiny3226, and interrupts were disabled while doing a
 
 
 ## Execution time in clocks; minimum maximum and average
+**WARNING - these were generated on a modern AVR with hardware multiply (AVRxt). Classic AVRs of all sorts, if they have to store values to main memory, and are doing so with a pointer, will have more overhead (1 clock per byte) Results for multiply and divide will be slower for classic tinyAVRs (AVRe).
 
 | Datatype      |   Add |   Sub | Mult. | Divide |
 |---------------|-------|-------|-------|--------|
 | Min (float)   |    97 |    99 |   133 |    460 |
 | Mean (float)  | 112.9 | 118.8 | 141.1 |  478.9 |
 | Max (float)   |   141 |   151 |   151 |    499 |
-| Min (int8)    |     - |     - |     - |    221 |
+| Min (int8)    |     9 |     5 |     8 |    221 |
 | Mean (int8)   |     5 |     5 |     8 |    233 |
-| Max (int8)    |     - |     - |     - |    243 |
-| Min (int16)   |     - |     - |     - |    225 |
+| Max (int8)    |     9 |     5 |     8 |    243 |
+| Min (int16)   |    14 |    14 |    22 |    225 |
 | Mean (int16)  |    14 |    14 |    22 |  235.1 |
-| Max (int16)   |     - |     - |     - |    247 |
-| Min (int32)   |     - |     - |     - |    603 |
+| Max (int16)   |    14 |    14 |    22 |    247 |
+| Min (int32)   |    20 |    20 |    81 |    603 |
 | Mean (int32)  |    20 |    20 |    81 |  604.4 |
-| Max (int32)   |     - |     - |     - |    609 |
-| Min (int64)   |     - |     - |     - |   1461 |
+| Max (int32)   |    20 |    28 |    81 |    609 |
+| Min (int64)   |    54 |    54 |   321 |   1461 |
 | Mean (int64)  |    54 |    54 |   321 | 1734.4 |
-| Max (int64)   |     - |     - |     - |   1999 |
+| Max (int64)   |    54 |    54 |   321 |   1999 |
 | Est. (float64)|   302 |   316 |   560 |   1500 |
 
 ### Main takeaways
 
 1. The big takeaway here is that division is agonizingly slow (we all knew that), especially on large data types. It's slower for integer types (effect for floats smaller) when the denominator is smaller, sometimes dramatically.
-
-2. All math on floats is slow as hell - they take about 5.5 times as long as integer operations on the equally sized long.
-
+2. All math on floats is slow as hell - they take about 5.5 times as long as integer operations on the equally sized long - except for division, 
 3. And so (we all knew this) you should try to avoid using floating point numbers as well as division, [see this document for some general techniquess](Fast_Math_Tricks.md)
-4. int32 division is slower than float division (!!)
-5. int64's are mind bogglingly slow, I suspect this is because there aren't enough working registers. 
+4. int64's are mind bogglingly slow, I suspect this is because there aren't enough working register
+5. There is a reason that we don't have 64 bit floating point datatypes, and why people avoid 64-bit integers whenever possible.
+The extrapolated values for float64's are based on observed patterns, not actual tests. There is no float65 datatype. As you can see, the performance would be truly abysmal.
+6. Never use an uint64 to store 64 flags. The performance impact is profound. 
 
 ## How do I get a float64? 
 You don't. Look at the performace numbers. The estimates for float64's, which don't exist, are very crude: I multiplied the float speed by the ratio of the int64 time to the int32 time (and in the case of division, I think it would scale worse than that), are intended as an answer to questions about "why don't we have 64bit floats?!" (1. no avr-gcc support until v10, and 2. Performance would be unspeakably bad.)

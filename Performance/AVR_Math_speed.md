@@ -25,24 +25,24 @@ Numbers were generated on a tiny3226, and interrupts were disabled while doing a
 ## Execution time in clocks; minimum maximum and average
 **WARNING - these were generated on a modern AVR with hardware multiply (AVRxt). Classic AVRs of all sorts, if they have to store values to main memory, and are doing so with a pointer, will have more overhead (1 clock per byte) Results for multiply and divide will be slower for classic tinyAVRs (AVRe).
 
-| Datatype      |   Add |   Sub | Mult. | Divide |
-|---------------|-------|-------|-------|--------|
-| Min (float)   |    97 |    99 |   133 |    460 |
-| Mean (float)  | 112.9 | 118.8 | 141.1 |  478.9 |
-| Max (float)   |   141 |   151 |   151 |    499 |
-| Min (int8)    |     9 |     5 |     8 |    221 |
-| Mean (int8)   |     5 |     5 |     8 |    233 |
-| Max (int8)    |     9 |     5 |     8 |    243 |
-| Min (int16)   |    14 |    14 |    22 |    225 |
-| Mean (int16)  |    14 |    14 |    22 |  235.1 |
-| Max (int16)   |    14 |    14 |    22 |    247 |
-| Min (int32)   |    20 |    20 |    81 |    603 |
-| Mean (int32)  |    20 |    20 |    81 |  604.4 |
-| Max (int32)   |    20 |    28 |    81 |    609 |
-| Min (int64)   |    54 |    54 |   321 |   1461 |
-| Mean (int64)  |    54 |    54 |   321 | 1734.4 |
-| Max (int64)   |    54 |    54 |   321 |   1999 |
-| Est. (float64)|   302 |   316 |   560 |   1500 |
+| Datatype      |   Add |   Sub | Mult. | Divide | Notes                                  |
+|---------------|-------|-------|-------|--------|----------------------------------------| 
+| Min (float)   |    97 |    99 |   133 |    460 |                                        |
+| Mean (float)  | 112.9 | 118.8 | 141.1 |  478.9 |                                        |
+| Max (float)   |   141 |   151 |   151 |    499 |                                        |
+| Min (int8)    |     9 |     5 |     8 |    221 |                                        |
+| Mean (int8)   |     5 |     5 |     8 |    233 |                                        |
+| Max (int8)    |     9 |     5 |     8 |    243 |                                        |
+| Min (int16)   |    14 |    14 |    22 |    225 |                                        |
+| Mean (int16)  |    14 |    14 |    22 |  235.1 |                                        |
+| Max (int16)   |    14 |    14 |    22 |    247 |                                        |
+| Min (int32)   |    20 |    20 |    81 |    603 |                                        |
+| Mean (int32)  |    20 |    20 |    81 |  604.4 |                                        |
+| Max (int32)   |    20 |    28 |    81 |    609 |                                        |
+| Min (int64)   |    54 |    54 |   321 |   1461 | This can be much lower depending on values |
+| Mean (int64)  |    54 |    54 |   321 | 1734.4 |                                        |
+| Max (int64)   |    54 |    54 |   321 |   1999 |                                        |
+| Est. (float64)|   302 |   316 |   560 |   1500 |                                        |
 
 ### Main takeaways
 

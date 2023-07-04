@@ -1,11 +1,8 @@
 # A comparison of modern AVRs 
 Separate from classic AVRs because they are not directly comparable, and because they blow the doors off any classic AVR that challenges them.
 
-## Argh, I broke the table. I don';t know what I broke though, nor how to find it so I can correct it
-Sorry :-(
-
 | Series                  |     0-Series   |     1-Series    | 1-Series "plus"  |      2-Series       |     AVR__DA/DB   |   AVR__DD20/14 |  AVR__DD28/32  |    AVR__EA             | AVR__EB     |       megaAVR 0   |
-|-----------|-------------|----------------|----------------|-----------------|------------------|---------------------|------------------|----------------|------------------------|-------------|-------------------|
+|-------------------------|----------------|----------------|-----------------|------------------|---------------------|------------------|----------------|------------------------|-------------|-------------------|
 | Availability            | Many backorder |  Many Backorder | Many Backordered |    Many Backordered | Many backordered | Many Backorder | Many Backorder |          Unreleased  | Unreleased  |  Some backordered |
 | Pincounts               | 8*  14, 20, 24 |  8*  14, 20, 24 |       14, 20, 24 |          14, 20, 24 |  28, 32, 48, 64  |       14 or 20 |       28 or 32 |      28, 32, or 48   |14, 20, 28 or 32 | 32, 40, or 48 |
 | Flash                   | 2*   4, 8, 16k |       2*  4, 8k |       16k or 32k | 4k, 8k, 16k, or 32k |   32k, 64k, 128k |  16k, 32k, 64k |  16k, 32k, 64k |   8k, 16k, 32k, 64k    | 8k, 16k, 32k | 8k, 16k, 32k, 48k |

@@ -1,5 +1,5 @@
 # Reading hex files
-Reading hex files by hand is terrible. Try to do everything you can to avoid it! 
+Reading hex files by hand is terrible. Try to do everything you can to avoid it!
 
 If you really do have a hex file that contains valuable information for some reason, and you need to figure out something about it... or maybe modify it:
 1. Make a backup
@@ -24,17 +24,17 @@ Sub with: (NO SPACE at start of line!)
 ```
 This gets rid of the stuff that gets in the way of reading it:
  * The checksums at ends of lines.
- * The byte-count at starts of lines. 
+ * The byte-count at starts of lines.
  * The 00 for normal data and puts a space between address and data.
 
 
-Find (Yes space at the start): - this keeps it from grabbing the part before the address from last sub, without anything to distract your eye ;-) 
+Find (Yes space at the start): - this keeps it from grabbing the part before the address from last sub, without anything to distract your eye ;-)
 ```
  ([A-F0-9]{4})([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?([A-F0-9]{4})?
 ```
 Sub with (starts and ends with a space; very important:
 ```
- \1 \2 \3 \4 \5 \6 \7 \8 
+ \1 \2 \3 \4 \5 \6 \7 \8
 ```
 Repeat above if needed to get the other half of the columns separated into words. Now the key step that makes all the difference....
 Find (space at start - so it won't match addresses):
@@ -45,7 +45,7 @@ Sub with:
 ```
 \2\1
 ```
-This swaps the high and low bytes so that they're in the order that matches the AVR instruction set manual. 
+This swaps the high and low bytes so that they're in the order that matches the AVR instruction set manual.
 
 ## So... Okay..... great... now what....
 
@@ -65,10 +65,10 @@ preceed the address of the register.
 93_0 1001 001r rrrr 0000 sts (followed by address)
 
 9409 1001 0101 0000 1001 ijmp
-9509 1001 0101 0000 1001 icall 
+9509 1001 0101 0000 1001 icall
 940E 1001 0100 0000 1110 call (<128k flash, followed by address)
 940C 1001 0100 0000 1100 jmp (<128k flash, followed by address)
-On 256k devices (atmega2560), the last digit can be F or D as well. 
+On 256k devices (atmega2560), the last digit can be F or D as well.
 
 B    1011 0PPd dddd PPPP in
 B    1011 1PPr rrrr PPPP out
@@ -79,7 +79,7 @@ The conditionals all start with F or 99/9B (skips), and not F8-FB, those are bit
 99   1001 1001 pppp psss sbic
 9B   1001 1011 pppp psss sbis
 
-F    1111 00ll llll lsss brbs (also all other br__ 
+F    1111 00ll llll lsss brbs (also all other br__
 F    1111 01ll llll lsss brbc
 
 F    1111 100d dddd 0sss bld
@@ -93,7 +93,7 @@ Singletons that are either important, common, or both.
 9588  1001 0101 1000 1000 sleep
 95A8  1001 0101 1010 1000 wdr
 95E8  1001 0101 1110 1000 spm
- 
+
 The rest of the 1-first-letter-per-instruction
 E    1110 KKKK dddd KKKK ldi
 
@@ -106,7 +106,7 @@ E    1110 KKKK dddd KKKK ldi
 
 8/A is an ldd or std
 
-Only call/rcall/icall, ret/reti, jmp/rjmp/ijmp, and the Branch instructions can do anything other than increment the program counter 
+Only call/rcall/icall, ret/reti, jmp/rjmp/ijmp, and the Branch instructions can do anything other than increment the program counter
 ```
 
 Numerical order
@@ -119,7 +119,7 @@ Numerical order
 03   0000 0011 yddd zrrr mulsu/fmul*
 04~7 0000 01rd dddd rrrr cpc
 08~B 0000 10rd dddd rrrr sbc
-0C~F 0000 11rd dddd rrrr add lsl (when r=f, lsl)
+0C~F 0000 11rd dddd rrrr add lsl (when r=d, lsl)
 
 10~3 0001 00rd dddd rrrr cpse
 14~7 0001 01rd dddd rrrr cp
@@ -138,7 +138,7 @@ Numerical order
 6    0110 KKKK dddd KKKK ori
 7    0111 KKKK dddd KKKK andi
 
-8    10q0 qq0r rrrr bqqq ldd (also A0~A7) - though note that when q = 0, this is ld itself, b chooses between Y and Z registers. 
+8    10q0 qq0r rrrr bqqq ldd (also A0~A7) - though note that when q = 0, this is ld itself, b chooses between Y and Z registers.
 8    10q0 qq1r rrrr bqqq std (also A8~AF)
 
 
@@ -177,46 +177,62 @@ Numerical order
 92~3 1001 001r rrrr 1101 st X+
 92~3 1001 001r rrrr 1110 st -X
 92~3 1001 001r rrrr 1111 pop
-320 unused opcodes, or 192 if you don't count the xmega combined load-stores that only xmega gets 
+320 unused opcodes, or 192 if you don't count the xmega combined load-stores that only xmega gets
 
-In this block, the LSN plays the starring role in choosing the instruction, while the MSB is constant except for it's lowest bit. In many cases this is the high bit of the number of the working register it's opperating on, and the upper MSN of the low byte is the rest of the register number.  
+In this block, the LSN plays the starring role in choosing the instruction, while the MSB is constant except for it's lowest bit. In many cases this is the high bit of the number of the working register it's opperating on, and the upper MSN of the low byte is the rest of the register number.
 94-95_0   1001 010d dddd 0000 com
 94-95_1   1001 010d dddd 0001 neg
-94-95_2   1001 010d dddd 0010 swap 
-94-95_3   1001 010d dddd 0011 inc 
-94-95_3   1001 010d dddd 0100 unused? 
+94-95_2   1001 010d dddd 0010 swap
+94-95_3   1001 010d dddd 0011 inc
+94-95_3   1001 010d dddd 0100 unused?
 94-95_5   1001 010d dddd 0101 asr
 94-95_6   1001 010d dddd 0110 lsr
 94-95_7   1001 010d dddd 0111 ror
-94_8      1001 0100 xxxx 1000 se_/cl_ for operating on the SREG 
+94_8      1001 0100 xxxx 1000 se_/cl_ for operating on the SREG
 95_8      1001 0101 xxxx 1000 Assorted argumenttless isns,
      9508 1001 0101 0000 1000 ret
      9518 1001 0101 0001 1000 reti (followed by 6 apparently unused opcodes)
-     9588 1001 0101 1000 1000 sleep  
+     9588 1001 0101 1000 1000 sleep
      9598 1001 0101 1001 1000 break
      95A8 1001 0101 1010 1000 wdr
-     95B8 1001 0101 1011 1000 unused? 
+     95B8 1001 0101 1011 1000 unused?
      95C8 1001 0101 1100 1000 LPM (implicit r0, may not be supported on recent parts.)
      95D8 1001 0101 1101 1000 ELPM (implicit r0, may not be supported on recent parts.)
      95E8 1001 0101 1110 1000 spm
      95F8 1001 0101 1111 1000 spm Z+
 9409      1001 0100 0000 1001 ijmp
 9419      1001 0100 0001 1001 eijmp    - followed by 14 unused opcodes
-9509      1001 0101 0000 1001 icall   
+9509      1001 0101 0000 1001 icall
 9519      1001 0101 1000 1001 eicall   - followed by 14 unused opcodes
-94-95_A   1001 010d dddd 1010 dec     
+94-95_A   1001 010d dddd 1010 dec
 94_B      1001 0100 KKKK 1011 unused except on xmega for DES -16 conditionally unused
 95_B      1001 0101 xxxx 1011 unused    - 16 unused
-940C-94FD 1001 010k kkkk 110k jmp (followed by address) only 940C used on 128k or smaller parts. 2560k parts can use 940D, and 512k xmegas 941C and 941D too. 
-940E-94FF 1001 010k kkkk 110k jmp (followed by address) only 940E used on 128k or smaller parts. 2560k parts can use 940F, and 512k xmegas 941E and 941F too. 
-950C-95FD 1001 010k kkkk 110k jmp (followed by address) None of these are used, would only be needed for an 8 mbyte flash chip, which I doubt is going to happen. 
+940C-94FD 1001 010k kkkk 110k jmp (followed by address) only 940C used on 128k or smaller parts. 2560k parts can use 940D, and 512k xmegas 941C and 941D too.
+940E-94FF 1001 010k kkkk 110k jmp (followed by address) only 940E used on 128k or smaller parts. 2560k parts can use 940F, and 512k xmegas 941E and 941F too.
+950C-95FD 1001 010k kkkk 110k jmp (followed by address) None of these are used, would only be needed for an 8 mbyte flash chip, which I doubt is going to happen.
 950E-95FF 1001 010k kkkk 110k jmp (followed by address)  none of these ever used
+     95B8 1001 0101 1011 1000 unused?
+     95C8 1001 0101 1100 1000 LPM (implicit r0 destination)
+     95D8 1001 0101 1101 1000 ELPM
+     95E8 1001 0101 1110 1000 spm
+     95F8 1001 0101 1111 1000 spm Z+
+9409      1001 0100 0000 1001 ijmp
+9419      1001 0100 2000 1001 eijmp    - followed by 14 unused opcodes
+9509      1001 0101 0000 1001 icall
+9519      1001 0101 1000 1001 eicall   - followed by 14 unused opcodes
+94-95_A   1001 010d dddd 1010 dec
+94_B      1001 0100 KKKK 1011 unused except on xmega for DES
+95_B      1001 0101 xxxx 1011 unused    - 16 unused
+940C-941D 1001 010k kkkk 110k jmp  (followed by address) only 940C used on 128k or smaller parts. 256k parts can use 940D, and 512k xmegas 941C and 941D too.
+940E-941F 1001 010k kkkk 111k call (followed by address) only 940E used on 128k or smaller parts. 256k parts can use 940F, and 512k xmegas 941E and 941F too.
+95_C-95_D 1001 010k kkkk 110k jmp  (followed by address) Invalid jump to address far too high.
+95_E-95_F 1001 010k kkkk 111k call (followed by address) Invalid call to address far too high.
 
 
-512 instuctions in 94 and 95,of which 32+7+14+14+16 are totally unused - leaving 83 unused, plus 16 more (DES) or xmega only. 
-120 out of 128 opcodes for jump/call have not been used on any production part. 
-So at most there are 219 opcodes here. 
-At worst, there are but 83. 
+512 instuctions in 94 and 95,of which 32+7+14+14+16 are totally unused - leaving 83 unused, plus 16 more (DES) or xmega only.
+120 out of 128 opcodes for jump/call have not been used on any production part.
+So at most there are 219 opcodes here.
+At worst, there are but 83.
 
 
 96        1001 0110 KKdd KKKK adiw
@@ -229,10 +245,10 @@ At worst, there are but 83.
 9B        1001 1011 pppp psss sbis
 1024 opcodes for all the (s?)bi[sc] stuff for high performance operations on the low I/O space.
 
-9C-9F     1001 11rd dddd rrrr mul 
+9C-9F     1001 11rd dddd rrrr mul
 
 A0~7      10q0 qq0r rrrr bqqq ldd
-A8~F      10q0 qq1r rrrr bqqq std 
+A8~F      10q0 qq1r rrrr bqqq std
 
 B0~7      1011 0PPd dddd PPPP in
 B8~F      1011 1PPr rrrr PPPP out
@@ -250,23 +266,24 @@ F8-F9     1111 100d dddd 1sss - unused, if below is true, likely acts like bld
 FA-FB     1111 101d dddd 0sss bst
 FA-FB     1111 101d dddd 1sss - unused, if below is true, likely acts like bst
 FC-FD     1111 110r rrrr 0sss sbrc
-FC-FD     1111 110r rrrr 1sss - unused, if below is true, likely acts like sbrc. 
+FC-FD     1111 110r rrrr 1sss - unused, if below is true, likely acts like sbrc.
 FE-FF     1111 111r rrrr 0sss sbrs
 FE-FF     1111 111r rrrr 1sss - unused, said to asts like sbrs
 And these are bit-level access to registers
 
-1024 unused opcodes where bit 3 is 1, the largest cluster 
+1024 unused opcodes where bit 3 is 1, the largest cluster
 
-Apparently 0xFF is treated an sbrs though - skip if bit 7 in register 31 is 1. That strongly suggests that bit3 gets ignored in that last block (which would be the natural result of there not being a reason to check it because there wasnt;t an alternative action, which in turn implies the rest of this block behaves the same way. 
+Apparently 0xFF is treated an sbrs though - skip if bit 7 in register 31 is 1. That strongly suggests that bit3 gets ignored in that last block (which would be the natural result of there not being a reason to check it because there wasnt;t an alternative action, which in turn implies the rest of this block behaves the same way.
 
 ```
 
 ## Okay, I found what needs to change
 Some time I'll write about the process of hackign something up in greater detail; key points are:
-Try to just change a value. If you can't do that, try to just change similar instructions. 
-If you can'd do either of those things, can you tinker with existing control flow  to get what you want? There is an unfortunate possibility that you might need to actually ADD code. Which is particularly painful, but do-able: replace two instructions with a `call` to empty flash, and proceed to act **almost** like you're writing a naked ISR. Because you're writing raw application code, there is no ABI or concept of call used registers. Any register you cannot determine is unneeded at the time of making that call must be preserved. Same goes for the SREG! Be sure to include those two instructions that you had to displace to make room for the call. The only thing different from writing an ISR is if there's a value in one of the registers and that's what you need to modify, obviously you don't want to save or restore that one! 
 
-The importance of minding the SREG is hard to overstate: all control flow is based on it, with the exception of two families of "skip-ifs" - hoywever, you can look ahead from the instructions you altered, one at a time. If you reach a br__, adc, sbc, sbci, rol, ror, etc (something that depends on the SREG) before you reach an instruction that blows away the SREG bits other than T and I, then yes you must absolutely preserve and restore it. If you reach one of those SREG clobbering instructions first, then you don't need to (note, however, that inc and dec are NOT sreg clobbering - they only clobber parts of it. And you already know if your code is going to be using the T or I bits. 
+Try to just change a value. If you can't do that, try to just change similar instructions.
+If you can'd do either of those things, can you tinker with existing control flow  to get what you want? There is an unfortunate possibility that you might need to actually ADD code. Which is particularly painful, but do-able: replace two instructions with a `call` to empty flash, and proceed to act **almost** like you're writing a naked ISR. Because you're writing raw application code, there is no ABI or concept of call used registers. Any register you cannot determine is unneeded at the time of making that call must be preserved. Same goes for the SREG! Be sure to include those two instructions that you had to displace to make room for the call. The only thing different from writing an ISR is if there's a value in one of the registers and that's what you need to modify, obviously you don't want to save or restore that one!
+
+The importance of minding the SREG is hard to overstate: all control flow is based on it, with the exception of two families of "skip-ifs" - hoywever, you can look ahead from the instructions you altered, one at a time. If you reach a br__, adc, sbc, sbci, rol, ror, etc (something that depends on the SREG) before you reach an instruction that blows away the SREG bits other than T and I, then yes you must absolutely preserve and restore it. If you reach one of those SREG clobbering instructions first, then you don't need to (note, however, that inc and dec are NOT sreg clobbering - they only clobber parts of it. And you already know if your code is going to be using the T or I bits.
 
 ## Yes, this is viable!
 
@@ -287,12 +304,15 @@ One thing that's interesting to note is the distribution/usage of opcodes (or ra
 * rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th.
 * At this point we are up to 11/16ths.
 * 3/16ths or so math and logical/arithmatic operations (actually, 13/64ths. bringing us to 14.25/16ths full
+* 1/8th is load/set with displacement (well, if you were ever wondering why they don't have an X-register version of those, there's your answer!
+* rjmp and rcall are each 1/16th of the instruction-space, and in/out is another 16th.
+* 3/16ths or so math and logical/arithmatic operations.
 * 1/32nd conditional branch, 1/64th skip-if
-* That means 15/16ths of possible opcodes are used, and we haven't even done any instructions other than the conditional branches, skipifs, logical/arithmatic, load/store with displacement (but not load/store without displacement), and a variety of other instructions aren't yet included.
+* That means 15/16ths of possible opcodes are used, and we haven't even done any instructions other than the conditional branches, immediates, skipifs, logical/arithmatic, load/store with displacement (but not load/store without displacement), in/out and rjmp/rcall. A few remaining instructions are 256 or 512 opcodes. (1/256 or 1/128th of possible opcodes.)
 
 ### Slack space calculations
 So how much slack is left in the instruction set? Very, VERY little!
-```
+```text
 By the first letter of the opcode:
 0 - 0x0001~0x00FF are not used, 255 instructions.
 1 - Full
@@ -303,19 +323,23 @@ By the first letter of the opcode:
 6 - Full
 7 - Full
 8 - Full
-9 - 192 + 83 opcodes (though some may exist as internal only functions), 124+16 unused on non-Xmega, and 120 not used anywhere because nothing with that much flash ever existed. So 275 for sure, another 128+16 = 142 for non-xmega, plus if you count opcodes to access memory that has ever existed that's another 120. So 275, 417 or 537. 
+9 - 192 + 83 opcodes (though some may exist as internal only functions), 124+16 unused on non-Xmega, and 120 not used anywhere because nothing with that much flash ever existed. So 275 for sure, another 128+16 = 142 for non-xmega, plus if you count opcodes to access memory that has ever existed that's another 120. So 275, 417 or 537.
 A - Full
 B - Full
 C - Full
 D - Full
 E - Full
-F - 1024 opcodes - though 0xFFFF needs to be either a NOP or a skipif like it is now, otherwise empty flash will do unpredictable things, which is a bad thing because that's where code ends up after a wild pointer is called. 
+F - 1024 opcodes - though 0xFFFF needs to be either a NOP or a skipif like it is now, otherwise empty flash will do unpredictable things, which is a bad thing because that's where code ends up after a wild pointer is called.
 ```
-There are 1024 opcodes in the 0xF8~FF range, half of that range, the range where the low byte is > 0x7F, and 1023 of them could in theory be used 
+There are 1024 opcodes in the 0xF8-FF range, half of that range, the range where the low byte is > 0x7F, and 1023 of them could in theory be used
 1023 + 255 + 275 = 1553 conservatively, 1695 more generously (stealing the xMega ones), or 1815 most generally (taking ones only applicable to flash sizes nobody expects to ever see. I know I am expecting, at most, 256k flash on a modern AVR, never more than that), open opcodes. The instruction space is 96.93 - 97.58% used, and what little space there is fragmented.
 
 Of course, that all is ignoring the possibility that there are other instructions used during the testing process not documented (these would most likely be located in 0x94-95, amongst those fragmented oddball instructions.
 
 An interesting experiment might be to use means other than the compiler to construct hex files that monitor the system state (which could be constructed with the compiler) as the invalid opcodes are used systematically to see if any of them do anything unexpected.
 
-It is worth noting that the Low/IO instructions (SBI, CBI, SBIC, SBIS) need 8 opcodes each per register, and with 4 registers per port, that means it would take 32 opcodes (plus compiler support) to give the magic of low I/O registers per per fully capable VPORT added. A 100 pin modern successor to the 2560 could avoid the existence of "second class pins" by using 128 opcodes per port to turn the lower half of the high I/O space into expanded low I/O space. But only needing 128 opcodes, there are two places where they could be placed where they would be contiguous. I suspect though that this would be a BFD to implement and we are unlikely to see it. But we totally do have the opcodes for it (unlike almost every other instruction we might desire, other than maybe getting the LAT/LAC/LAS/XCH instructions from xmega back - except as described they are kinda useless - they only act on SRAM. I know I want to LAS and LAC all the time - but almost never on SRAM, always on extended I/O registers. A set of LAT/LAC/LAS/XCH instruction that only operated on the extended I/O registers would be nearly as useful as one that allowed operation over the whole of the dataspace (excepting mapped progmem, ofc).
+It is worth noting that the LowI/O instructions (SBI, CBI, SBIC, SBIS) need 8 opcodes each per register, and with 4 registers per port, that means it would take 128 opcodes (plus compiler support)to give the magic of low I/O registers per per fully capable port added. A 100 pin modern successor to the 2560 could avoid the existence of "second class pins" by using 128 opcodes (in addition to whatever else they need to do to make that work) per port. If it followed the example of the 2560, that would probably mean 88 port pins, up from, the 56 we have now. That's only 32 pins or 4 ports. And coincidentally... the first half of the high I/O space is currently totally unused, that could be done, in theory.
+
+There are 1024 opcodes in the 0xF8-FF range, half of that range, the range where the low byte is > 0x7F.
+1024 + 255 + 275 = 1580 conservatively, or 1696 more generously, open opcodes. The instruction space is 96.93 - 97.58% used, and what little space there is fragmented.
+and that all is ignoring the possibility that there are other instructions used during the testing process not documented (these would most likely be located in 0x94-95, amongst those fragmented oddball instructions

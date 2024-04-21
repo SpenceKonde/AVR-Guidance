@@ -176,7 +176,7 @@ the voltage is not going all the way down to ground when one side tries to asser
 
 They are not recommended unless there is something keeping you from using a diode configuration.
 
-However, if your choice is between a resistor and a silicon diode, as opposed to as Schottky one, always pick the Schottky, because the silicon diode will not work.
+However, if your choice is between a resistor and a silicon diode, as opposed to as Schottky one, always pick the resistor, because the silicon diode will not work.
 
 
 The PyUPDI classic:

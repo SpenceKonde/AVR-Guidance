@@ -94,18 +94,34 @@ This spreadsheet is gathered from public data, and lists memory specs and device
 [https://docs.google.com/spreadsheets/d/14tkhND4I4KUwLesKOpxHj2eC5IMZf9aOpDS6wgclc5A/edit?usp=sharing](https://docs.google.com/spreadsheets/d/14tkhND4I4KUwLesKOpxHj2eC5IMZf9aOpDS6wgclc5A/edit?usp=sharing)
 
 ## Peripheral versions
-**These versions are 100% unofficial - it's a numbering system I personally started assigning because there are subtle differences that are very easily missed while looking through the datasheets (the difference may be a single line in a 700 page document**
+**These versions are 100% unofficial - it's a numbering system I personally started assigning because there are subtle differences that are very easily missed while looking through the datasheets (the difference may be a single line in a 700 page document)**
+
 USART: I'm not even going to try to number these. Errata have appeared and disappeared from several erratum listings without a die rev, so not even Microchip seems to know what it impacts. 
-TCA 1.1 supports an additional event input.
-Both TCA 1.0 and 1.1 have an "erratum": The restart command/event behaves as described in the datasheet. That is wrong (apparently) and it should not reset the direction
-TCA 1.1A (or 1.0A, if the TCA is fixed without adding the new event input) fixes that erratum. Presumably it will also be fixed in the datasheet as well
+
+TCA 1.1 supports an additional event input. Both TCA 1.0 and 1.1 have an "erratum": the restart command/event behaves as described in the datasheet. That is wrong (apparently) and it should not reset the direction.
+
+TCA 1.1A (or 1.0A, if the TCA is fixed without adding the new event input) fixes that erratum. Presumably it will also be fixed in the datasheet as well.
+
 TCB 1.1 adds cacscade mode, clock on event, and the overflow flag.
+
 TCB 1.1A finally fixes the registers in 8-bit PWM mode to act as 8-bit registers. 
-EVSYS 0.9 has two kinds of channels, and two kinds of users, and a dumb layout of generator options for the channels. EVSYS 0.99 and 1.0 are identical except that the 
-RTC 0.8 does not support a crystal, but is afflicted by a brutal erratum. This is easily worked around **but only if you are aware of it**. I've gone back and forth with someone on this for days before we concluded that they couldn't do what they were planning with the RTC, because it was sunk by one part of the erratum, but depended on another part of the erratum. 
-RTC 0.9 supports a crystal, but is still afflicted by the erratum
-RTC 1.0 is identical to RTC 0.9 except that the erratum is corrected. (yeah, the erratum is that bad - it has at least two major aspects and is maddening to debug.
-RTC 1.1, EVSYS 1.1, GPIO 1.1 - these come as a group. On EVSYS 1.0, each event channel gets 16 options corresponding to pins on each port, and half of the PIT-divided-by-n options. In 1.1, each channel has 2 event generators for each channel, and 2 event generators for the RTC. The RTC and PORT peripherals get a register to configure the event generation. In other words, starting with the Ex-series, the event system is finally what it should have been from the beginning.  
+
+EVSYS 0.9 has two kinds of channels, and two kinds of users, and a dumb layout of generator options for the channels. 
+
+EVSYS 0.99 and 1.0 are identical except that the RTC 0.8 does not support a crystal, but is afflicted by a brutal erratum. 
+This is easily worked around **but only if you are aware of it**. 
+I've gone back and forth with someone on this for days before we concluded that they couldn't do what they were planning with the RTC,
+ because it was sunk by one part of the erratum, but depended on another part of the erratum. 
+ 
+RTC 0.9 supports a crystal, but is still afflicted by the erratum.
+
+RTC 1.0 is identical to RTC 0.9 except that the erratum is corrected (yeah, the erratum is that bad - it has at least two major aspects and is maddening to debug).
+
+RTC 1.1, EVSYS 1.1, GPIO 1.1 - these come as a group.
+On EVSYS 1.0, each event channel gets 16 options corresponding to pins on each port, and half of the PIT-divided-by-n options.
+In 1.1, each channel has 2 event generators for each channel, and 2 event generators for the RTC.
+The RTC and PORT peripherals get a register to configure the event generation.
+In other words, starting with the Ex-series, the event system is finally what it should have been from the beginning.  
 
 ## A complaint: Too f'ing many documents, not enough centralized information
 The modern AVRs are have VERY few differences. megaTinyCore and DxCore share a large amount of code, and where the code is different, it is frequently a matter of optimization rather than anything else. In spite of that:
@@ -114,4 +130,4 @@ The modern AVRs are have VERY few differences. megaTinyCore and DxCore share a l
 * The device ID patterns hold interesting insights (though I can imagine that Microchip might not want to talk so much about *those*.)
 * Despite the fact that a large portion of the (rather numerous) errata effects multiple parts (often "All AVRs released from 2016 to 2022"), there is no master list on Microchip's website that has an erratum on each row, and a column for each (presumed) die (a die is presumed to be the same on two parts if they share errata sheets and datasheets and exist in the same silicon revisions), which would show one mark for "All versions known to be impacted" another for "All versions known NOT impacted", and, if it's been fixed, the first fixed REVID, and for newly added errata where the testing hasn't been conducted on all parts yet, a mark for "Belived to effect"/"belived not to effect". I know of people who held off on buying AVR-DD parts until someone proved to them that an erratum was fixed there. It is often months between errata revisions, so you can see an erratum pop up on one part.... and then you have to test whatever part you're actually using to see if it has the bug too or not - the fact that it's not on the errata for that part could mean it's uneffected, and they tested it, that they haven't tested it but are pretty sure it is (or isn't) present there, or that they have confirmed it and it will be in the version of the errata they'll publish in a few months.Really? 
   * They remove "datasheet clarifications" as they are addded to the datasheet. This can lead to the awful situation where you've seen two versions of the datasheet, but there were two errata sheets released in that time, the first of which added clarifications, and the second which came out with the datasheet, and removed the clarifications. The Datasheet Revision History provides neither a thorough description of the changes nor a link to the specific place in the datasheet that was changed. What are you supposed to do? You can't even compare the text without writing a program to desecure and rip the contents of the PDFs to text and then perform extensive regex replacement, and even then might nor be viable.  
-  * I know Microchip would love to not talk about the errata or datasheet clarifications (Guess which direction the clarifications are typically in?), but with the modern AVR era containing very few die revs that have actually fixed problems, of which many parts had 10-20, several serious, they really owe it to their customers to provide a better way of tracking it. Even better would be if they marked what priority the errata were within Microchip, so we could plan ahead and use that to inform our design decisions (for example, if a part has a showstopper errata for you, you want to know "Do I design around a different part?" (maybe a newer AVR)
+  * I know Microchip would love to not talk about the errata or datasheet clarifications (guess which direction the clarifications are typically in?), but with the modern AVR era containing very few die revs that have actually fixed problems, of which many parts had 10-20, several serious, they really owe it to their customers to provide a better way of tracking it. Even better would be if they marked what priority the errata were within Microchip, so we could plan ahead and use that to inform our design decisions (for example, if a part has a showstopper errata for you, you want to know "Do I design around a different part?" (maybe a newer AVR).

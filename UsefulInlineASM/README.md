@@ -60,11 +60,14 @@ __asm__ __volatile__ (
 Note: for the common case where you want to compose a 16-bit value from 2 8-bit ones, just use a union.
 
 ### Fast rol32 and ror32
-This is a rotate-left opperation on a 32-bit value implemented in 9 words and 9 clocks-per-shift. Note that there is not one bit in limbo with this, as the normal reason to want such an opperation is for xorshift applications which reqire that (typically seen in the context of encryption).
+This is a rotate-left opperation on a 32-bit value implemented in 9 words and 9 clocks-per-shift. Note that there is not one bit in limbo with this, as the normal reason to want such an opperation is for xorshift applications which expect there to be no hidden bit. Encryption is one such case
 
 The naive implementation (number << bits)|(number >> (32-bits)) is both larger and always takes the maximum length of time.
 
-You should only use this when 17 > bits > 0. If bits > 16, use ror32 with 32-bits. And if bits == 0, you're done.
+You should only use this when 17 > bits > 0. If bits > 16, this will work, but it's dumb. Runtime of both of these is proportional to bits (with virtually no fixed overhead - the loop overhead nullifies it). And rol32(x, n) = ror32(x, 32-n)
+
+
+
 
 ```c++
 uint32_t rol32(uint32_t number, uint8_t bits) {
@@ -96,4 +99,47 @@ uint32_t ror32(uint32_t number, uint8_t bits) {
  : "+r" (number), "+d" (bits))
  return number;
 }
+```
+This version is a little fancier; it expects a signed number of bits (positive = left, negative = right) from -128 to 127. Obviouly since we're rolling bits over, only values between -31 and 31 are reasonable; other values are treated as the value cast to a uint8_t and bitwise anded with 0x1F. The values -15 to 16, or equivalantly in binary, 1 to 31 (we chexk if the user passed a 0, and if so return the result unaltered), and we hack off all the irrelevant high bits.
+
+
+```c++
+
+uint32_t roller32(uint32_t number, int8_t bits) {
+  __asm__ __volatile__ (
+    "andi %1, 0x1F" "\n\t" // rotations of more than 32 bits are equivalent to bits mod 32. From here on out, we treat this as a 5 bit unsigned int.
+    //if bits is a multiple of 32, this is a donothing.
+    "brne .+2"            "\n\t"
+    "rjmp roller32end"    "\n\t"
+    "sbrs %1, 4"          "\n\t"
+    "rjmp rol32code"      "\n\t"
+   "ror32code:"           "\n\t"
+    "sec"                 "\n\t"
+    "clr r0"              "\n\t"
+    "ror r0"              "\n\t" // put 128 into r0
+   "ror32body:"           "\n\t"
+    "lsr %0D"             "\n\t" // same deal as above
+    "ror %0C"             "\n\t" // except we have to add 128 to the high byte instead of 1 to the low byte.
+    "ror %0B"             "\n\t" // that's why we made the 128 above
+    "ror %0A"             "\n\t"
+    "brcc .+2"            "\n\t" //if we shifted a zero out we skip the addition,
+    "add %0D, r0"         "\n\t" // if we shifted a 1 out we use that preprepared 128.
+    "inc %1"              "\n\t" // and here we count UP with bits,
+    "andi %1, 32"         "\n\t" // this will zero it out when the shift hits 32, indicating the desired number of rightshifts
+    "brne ror32body"      "\n\t"
+    "rjmp roller32end"    "\n\t"
+   "rol32code:"           "\n\t"
+    "lsl %0A"             "\n\t" // leftshift the low byte
+    "rol %0B"             "\n\t" // now second byte
+    "rol %0C"             "\n\t" //
+    "rol %0D"             "\n\t" // and final byte.
+    "brcc .+2"            "\n\t" // we just did an lsl on the lsb, so we know low bit is currently zero, so see if we just shifted out a 1.
+    "inc %0A"             "\n\t" // if so add 1 to the lsb. No need to carry because we know the low bit is 0
+    "subi %1, 1"          "\n\t" // bits-- and clear the carry flag (unless called with bits = 0, but we checked for that)
+    "brne rol32code"      "\n\t" // branch back to the start.
+   "roller32end:"         "\n\t"
+ : "+r" (number), "+d" (bits))
+ return number;
+}
+
 ```
